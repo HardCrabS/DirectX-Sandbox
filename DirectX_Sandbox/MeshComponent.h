@@ -5,6 +5,7 @@
 #include <DirectXMath.h>
 #include "Vertex.h"
 #include "Graphics.h"
+#include "MeshData.h"
 
 // TODO: move to material
 struct VertexConstantBuffer
@@ -26,6 +27,6 @@ public:
 	int indexCount;
 
 public:
-	MeshComponent(std::vector<Vertex>& vertices, std::vector<DWORD>& indices);
+	MeshComponent(MeshData meshData);
 	~MeshComponent();
 };

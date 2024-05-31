@@ -250,8 +250,10 @@ void CreateConsole() {
     // Open the console output and input in write and read mode respectively
     if (consoleOutput != INVALID_HANDLE_VALUE) {
         freopen_s(&fOut, "CONOUT$", "w", stdout);
+        freopen_s(&fOut, "CONOUT$", "w", stderr);
         freopen_s(&fIn, "CONIN$", "r", stdin);
         std::cout.clear();
+        std::cerr.clear();
         std::cin.clear();
     }
 

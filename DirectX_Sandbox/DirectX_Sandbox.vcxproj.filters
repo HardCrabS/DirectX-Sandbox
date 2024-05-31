@@ -19,6 +19,18 @@
     <Filter Include="Header Files\ECS_Gameplay">
       <UniqueIdentifier>{9b131c1a-58cd-4178-8388-e27030df73de}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Singletons">
+      <UniqueIdentifier>{cb9cd277-b185-4097-800d-0f2892a940fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ECS_Base">
+      <UniqueIdentifier>{11c29e4c-aac6-4d10-9857-c84cb60a1c78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ECS_Gameplay">
+      <UniqueIdentifier>{428a821b-6bde-4c54-835d-da95df902c39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Singletons">
+      <UniqueIdentifier>{9be3944d-2c61-4b49-bfd4-fbbfb8110c9b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -36,25 +48,7 @@
     <ClInclude Include="Vertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ECSWorld.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Graphics.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GameWorld.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Constants.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Logger.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="InputManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Component.h">
@@ -81,46 +75,76 @@
     <ClInclude Include="TransformComponent.h">
       <Filter>Header Files\ECS_Gameplay</Filter>
     </ClInclude>
+    <ClInclude Include="IComponent.h">
+      <Filter>Header Files\ECS_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="ECSWorld.h">
+      <Filter>Header Files\Singletons</Filter>
+    </ClInclude>
+    <ClInclude Include="GameWorld.h">
+      <Filter>Header Files\Singletons</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics.h">
+      <Filter>Header Files\Singletons</Filter>
+    </ClInclude>
+    <ClInclude Include="InputManager.h">
+      <Filter>Header Files\Singletons</Filter>
+    </ClInclude>
+    <ClInclude Include="Logger.h">
+      <Filter>Header Files\Singletons</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Component.cpp">
+    <ClCompile Include="MeshData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Entity.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ECSWorld.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Graphics.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GameWorld.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderSystem.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\ECS_Base</Filter>
     </ClCompile>
     <ClCompile Include="System.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\ECS_Base</Filter>
     </ClCompile>
-    <ClCompile Include="MeshComponent.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Component.cpp">
+      <Filter>Source Files\ECS_Base</Filter>
     </ClCompile>
     <ClCompile Include="CameraSystem.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\ECS_Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshComponent.cpp">
+      <Filter>Source Files\ECS_Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderSystem.cpp">
+      <Filter>Source Files\ECS_Gameplay</Filter>
     </ClCompile>
     <ClCompile Include="TransformComponent.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\ECS_Gameplay</Filter>
     </ClCompile>
-    <ClCompile Include="Logger.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="ECSWorld.cpp">
+      <Filter>Source Files\Singletons</Filter>
+    </ClCompile>
+    <ClCompile Include="GameWorld.cpp">
+      <Filter>Source Files\Singletons</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics.cpp">
+      <Filter>Source Files\Singletons</Filter>
     </ClCompile>
     <ClCompile Include="InputManager.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Singletons</Filter>
+    </ClCompile>
+    <ClCompile Include="Logger.cpp">
+      <Filter>Source Files\Singletons</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

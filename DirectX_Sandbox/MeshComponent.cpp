@@ -1,8 +1,11 @@
 #include "MeshComponent.h"
 
-MeshComponent::MeshComponent(std::vector<Vertex>& vertices, std::vector<DWORD>& indices)
+MeshComponent::MeshComponent(MeshData meshData)
 {
     logInfo("Created MeshComponent");
+
+    auto vertices = meshData.GetVertices();
+    auto indices = meshData.GetIndices();
 
     this->vertexCount = vertices.size();
     this->indexCount = indices.size();
