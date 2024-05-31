@@ -261,3 +261,6 @@ __pycache__/
 *.pyc
 /ECS-BountyHunterDemo-Win-x86-release-build-05112017.zip
 /ECS-BountyHunterDemo-Win-x86-release-build-05112017
+
+!Assets/
+!Assets/**
