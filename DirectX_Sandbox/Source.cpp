@@ -51,9 +51,6 @@ int WINAPI WinMain(HINSTANCE hInstance,
     CreateConsole();
 
     graphics->Init(Width, Height, hInstance, hwnd);
-    graphics->InitPipeline();
-    //graphics->InitScene();
-
     gameWorld.InitScene();
 
     messageloop();

@@ -1,7 +1,7 @@
 #include "GameWorld.h"
-#include <iostream>
 #include "MeshComponent.h"
 #include "MeshData.h"
+#include "Material.h"
 #include "CameraComponent.h"
 #include "TransformComponent.h"
 
@@ -21,18 +21,22 @@ void GameWorld::InitScene()
 	ecsWorld->AddComponent(cameraEntity->GetID(), std::move(cameraComponent));
 
 	Entity* rectEntity1 = ecsWorld->CreateEntity();
-	//auto meshComponent = std::make_unique<MeshComponent>(MeshData(PrimitiveType::Cube));
-	auto meshComponent = std::make_unique<MeshComponent>(MeshData("../Assets/Models/CigaretteBox.obj"));
+	Material* mat1 = Graphics::getInstance().RegisterMaterial(std::make_unique<Material>(
+		L"shaders.fx", "VS", L"shaders.fx", "PS"));
+	auto meshComponent = std::make_unique<MeshComponent>(MeshData("../Assets/Models/CigaretteBox.obj"), mat1);
 	auto transformComponent = std::make_unique<TransformComponent>();
-	transformComponent->Translate(DirectX::XMVectorSet(.0f, .0f, 0.0f, 0.0f));
+	transformComponent->Scale(DirectX::XMVectorSet(3.0f, 3.0f, 3.0f, 1.0f));
 	ecsWorld->AddComponent(rectEntity1->GetID(), std::move(meshComponent));
 	ecsWorld->AddComponent(rectEntity1->GetID(), std::move(transformComponent));
 
-	//Entity* rectEntity2 = ecsWorld->CreateEntity();
-	//auto meshComponent2 = std::make_unique<MeshComponent>(MeshData(PrimitiveType::Cube));
-	//auto transformComponent2 = std::make_unique<TransformComponent>();
-	//ecsWorld->AddComponent(rectEntity2->GetID(), std::move(meshComponent2));
-	//ecsWorld->AddComponent(rectEntity2->GetID(), std::move(transformComponent2));
+	Entity* rectEntity2 = ecsWorld->CreateEntity();
+	Material* mat2 = Graphics::getInstance().RegisterMaterial(std::make_unique<Material>(
+		L"solid.fx", "VS", L"solid.fx", "PS"));
+	auto meshComponent2 = std::make_unique<MeshComponent>(MeshData(PrimitiveType::Cube), mat2);
+	auto transformComponent2 = std::make_unique<TransformComponent>();
+	transformComponent2->Translate(DirectX::XMVectorSet(-5.0f, .0f, 0.0f, 0.0f));
+	ecsWorld->AddComponent(rectEntity2->GetID(), std::move(meshComponent2));
+	ecsWorld->AddComponent(rectEntity2->GetID(), std::move(transformComponent2));
 }
 
 void GameWorld::Update()

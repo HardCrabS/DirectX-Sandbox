@@ -15,9 +15,7 @@ VS_OUTPUT VS(float4 inPos : POSITION, float4 inColor : COLOR, float4 normal : NO
     VS_OUTPUT output;
     
     output.Pos = mul(inPos, WVP);
-    float4 vLightDirection = float4(.0f, 3.0f, -1.0f, 1.0f);
-    output.Color = saturate((dot(normalize(vLightDirection), normal)));
-    output.Normal = normal;  // TODO: mult by World matrix
+    output.Color = inColor;
     
     return output;
 }

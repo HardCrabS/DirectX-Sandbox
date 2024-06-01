@@ -31,6 +31,12 @@
     <Filter Include="Source Files\Singletons">
       <UniqueIdentifier>{9be3944d-2c61-4b49-bfd4-fbbfb8110c9b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Materials">
+      <UniqueIdentifier>{2144744b-a424-429e-a29b-b8e2bb8b461c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Materials">
+      <UniqueIdentifier>{958d1488-aa23-4c33-aa49-cd9c3e4ae761}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -99,6 +105,12 @@
     <ClInclude Include="ModelLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Header Files\Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -146,6 +158,12 @@
     <ClCompile Include="Logger.cpp">
       <Filter>Source Files\Singletons</Filter>
     </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Source Files\Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectX_Sandbox.rc">
@@ -162,5 +180,6 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shaders.fx" />
+    <FxCompile Include="solid.fx" />
   </ItemGroup>
 </Project>

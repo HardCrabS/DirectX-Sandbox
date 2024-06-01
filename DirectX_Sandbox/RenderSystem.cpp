@@ -1,5 +1,4 @@
 #include "RenderSystem.h"
-#include "MeshComponent.h"
 
 void RenderSystem::Initialize()
 {
@@ -27,12 +26,7 @@ void RenderSystem::UpdateEntity(Entity* entity)
 
     ID3D11DeviceContext* devcon = Graphics::getInstance().GetDeviceContext();
 
-    XMMATRIX WVP = transformComponent->GetWorldMatrix() * 
-        cameraToRenderFrom->viewMatrix * cameraToRenderFrom->projectionMatrix;
-
-    meshComponent->constantBuffer.WVP = DirectX::XMMatrixTranspose(WVP);
-    devcon->UpdateSubresource(meshComponent->cbBuffer, 0, NULL, &meshComponent->constantBuffer, 0, 0);
-    devcon->VSSetConstantBuffers(0, 1, &meshComponent->cbBuffer);
+    UpdateMaterial(transformComponent, meshComponent);
 
     devcon->IASetIndexBuffer(meshComponent->pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
@@ -41,4 +35,18 @@ void RenderSystem::UpdateEntity(Entity* entity)
     devcon->IASetVertexBuffers(0, 1, &meshComponent->pVertexBuffer, &stride, &offset);
 
     devcon->DrawIndexed(meshComponent->indexCount, 0, 0);
+}
+
+void RenderSystem::UpdateMaterial(TransformComponent* transform, MeshComponent* mesh)
+{
+    auto devcon = Graphics::getInstance().GetDeviceContext();
+
+    devcon->VSSetShader(mesh->material->GetVS(), 0, 0);
+    devcon->PSSetShader(mesh->material->GetPS(), 0, 0);
+
+    devcon->IASetInputLayout(mesh->material->GetVertLayout());
+    devcon->IASetPrimitiveTopology(mesh->material->GetTopology());
+
+    mesh->material->UpdateResources(transform->GetWorldMatrix(), cameraToRenderFrom->viewMatrix,
+        cameraToRenderFrom->projectionMatrix);
 }

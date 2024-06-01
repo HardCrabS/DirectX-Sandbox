@@ -12,7 +12,9 @@ void MeshData::LoadFromFile(const std::string& path)
 
 	for (int i = 0; i < vertices.size(); i++)
 	{
-		Vertex vertex(vertices[i].x, vertices[i].y, vertices[i].z, 1.f, 1.f, 1.f, 1.f);
+		Vertex vertex;
+		vertex.pos = XMFLOAT3(vertices[i].x, vertices[i].y, vertices[i].z);
+		vertex.normal = XMFLOAT3(normals[i].x, normals[i].y, normals[i].z);
 		this->vertices.push_back(vertex);
 	}
 	this->indices = indices;

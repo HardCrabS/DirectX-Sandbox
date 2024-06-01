@@ -1,6 +1,6 @@
 #include "MeshComponent.h"
 
-MeshComponent::MeshComponent(MeshData meshData)
+MeshComponent::MeshComponent(MeshData meshData, Material* material) : material(material)
 {
     logInfo("Created MeshComponent");
 
@@ -42,23 +42,10 @@ MeshComponent::MeshComponent(MeshData meshData)
 
     hr = device->CreateBuffer(&bd, &vertexBufferData, &pVertexBuffer);
     assert(!FAILED(hr));
-
-    // constant buffer
-    // TODO: move to material
-    D3D11_BUFFER_DESC cbbd;
-    ZeroMemory(&cbbd, sizeof(D3D11_BUFFER_DESC));
-    cbbd.Usage = D3D11_USAGE_DEFAULT;
-    cbbd.ByteWidth = sizeof(VertexConstantBuffer);
-    cbbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    cbbd.CPUAccessFlags = 0;
-    cbbd.MiscFlags = 0;
-    hr = device->CreateBuffer(&cbbd, NULL, &cbBuffer);
-    assert(!FAILED(hr));
 }
 
 MeshComponent::~MeshComponent()
 {
     pVertexBuffer->Release();
     pIndexBuffer->Release();
-    cbBuffer->Release();
 }

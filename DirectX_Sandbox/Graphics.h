@@ -6,6 +6,7 @@
 #include <memory>
 #include <vector>
 #include "Vertex.h"
+#include "Material.h"
 
 using namespace DirectX;
 
@@ -18,13 +19,7 @@ class Graphics
 	ID3D11DepthStencilView* depthStencilView;
 	ID3D11Texture2D* depthStencilBuffer;
 
-	ID3D11VertexShader* VS;
-	ID3D11PixelShader* PS;
-	ID3D10Blob* VS_Buffer;
-	ID3D10Blob* PS_Buffer;
-	ID3D11InputLayout* vertLayout;
-
-	std::vector<D3D11_INPUT_ELEMENT_DESC> layout;
+	std::vector<std::unique_ptr<Material>> materials;
 
 	int Width, Height;
 
@@ -41,11 +36,10 @@ public:
 	void operator=(const Graphics&) = delete;
 
 	void Init(int width, int height, HINSTANCE hInstance, HWND hwnd);
-	void InitPipeline();
 	void CleanUp();
-	void InitScene();
 	void ClearScreen();
 	void Present();
+	Material* RegisterMaterial(std::unique_ptr<Material> mat);
 
 	int GetWidth() const { return Width; }
 	int GetHeight() const { return Height; }
