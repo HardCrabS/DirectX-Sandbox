@@ -1,7 +1,8 @@
 #include "GameWorld.h"
 #include "MeshComponent.h"
 #include "MeshData.h"
-#include "Material.h"
+#include "SurfaceMaterial.h"
+#include "SolidMaterial.h"
 #include "CameraComponent.h"
 #include "TransformComponent.h"
 
@@ -21,22 +22,30 @@ void GameWorld::InitScene()
 	ecsWorld->AddComponent(cameraEntity->GetID(), std::move(cameraComponent));
 
 	Entity* rectEntity1 = ecsWorld->CreateEntity();
-	Material* mat1 = Graphics::getInstance().RegisterMaterial(std::make_unique<Material>(
-		L"shaders.fx", "VS", L"shaders.fx", "PS"));
-	auto meshComponent = std::make_unique<MeshComponent>(MeshData("../Assets/Models/CigaretteBox.obj"), mat1);
+	Material* mat1 = Graphics::getInstance().RegisterMaterial(
+		std::make_unique<SurfaceMaterial>(L"../Assets/Textures/dog.jpg"));
+	auto meshComponent = std::make_unique<MeshComponent>(MeshData("../Assets/Models/TestMaterial1.fbx"), mat1);
 	auto transformComponent = std::make_unique<TransformComponent>();
-	transformComponent->Scale(DirectX::XMVectorSet(3.0f, 3.0f, 3.0f, 1.0f));
+	transformComponent->Scale(DirectX::XMVectorSet(1.0f, 1.0f, 1.0f, 1.0f));
 	ecsWorld->AddComponent(rectEntity1->GetID(), std::move(meshComponent));
 	ecsWorld->AddComponent(rectEntity1->GetID(), std::move(transformComponent));
 
 	Entity* rectEntity2 = ecsWorld->CreateEntity();
-	Material* mat2 = Graphics::getInstance().RegisterMaterial(std::make_unique<Material>(
-		L"solid.fx", "VS", L"solid.fx", "PS"));
-	auto meshComponent2 = std::make_unique<MeshComponent>(MeshData(PrimitiveType::Cube), mat2);
+	Material* mat2 = Graphics::getInstance().RegisterMaterial(
+		std::make_unique<SurfaceMaterial>(L"../Assets/Textures/cat.jpg"));
+	auto meshComponent2 = std::make_unique<MeshComponent>(MeshData("../Assets/Models/TestSimpleCube.obj"), mat2);
 	auto transformComponent2 = std::make_unique<TransformComponent>();
-	transformComponent2->Translate(DirectX::XMVectorSet(-5.0f, .0f, 0.0f, 0.0f));
+	transformComponent2->Translate(DirectX::XMVectorSet(-4.0f, .0f, 0.0f, 0.0f));
 	ecsWorld->AddComponent(rectEntity2->GetID(), std::move(meshComponent2));
 	ecsWorld->AddComponent(rectEntity2->GetID(), std::move(transformComponent2));
+
+	Entity* rectEntity3 = ecsWorld->CreateEntity();
+	Material* mat3 = Graphics::getInstance().RegisterMaterial(std::make_unique<SolidMaterial>(DirectX::XMFLOAT4(1,0,0,1)));
+	auto meshComponent3 = std::make_unique<MeshComponent>(MeshData(PrimitiveType::Cube), mat3);
+	auto transformComponent3 = std::make_unique<TransformComponent>();
+	transformComponent3->Translate(DirectX::XMVectorSet(.0f, .0f, 5.0f, 0.0f));
+	ecsWorld->AddComponent(rectEntity3->GetID(), std::move(meshComponent3));
+	ecsWorld->AddComponent(rectEntity3->GetID(), std::move(transformComponent3));
 }
 
 void GameWorld::Update()

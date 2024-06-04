@@ -1,7 +1,7 @@
 #include "ModelLoader.h"
 #include <sstream>
 
-void ModelLoader::LoadModel(const std::string filename, vector<XMFLOAT3>& vertices, 
+void ModelLoader::LoadModel(const std::string filename, vector<XMFLOAT3>& vertices, vector<XMFLOAT4>& colors,
 	vector<XMFLOAT3>& normals, vector<XMFLOAT2>& textCoords, vector<DWORD>& indices) {
 	Assimp::Importer importer;
 
@@ -13,6 +13,8 @@ void ModelLoader::LoadModel(const std::string filename, vector<XMFLOAT3>& vertic
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
 		logError(std::string("ASSIMP::") + importer.GetErrorString());
+		// TODO: make proper exception instead of assert
+		assert(false && "Could not open the file");
 		return;
 	}
 
@@ -39,6 +41,22 @@ void ModelLoader::LoadModel(const std::string filename, vector<XMFLOAT3>& vertic
 		}
 		else {
 			textCoords.push_back(XMFLOAT2(0.0f, 0.0f));
+		}
+
+		// Colors
+		if (mesh->HasVertexColors(0)) {
+			aiColor4D color = mesh->mColors[0][i];
+			colors.push_back(XMFLOAT4(color.r, color.g, color.b, color.a));
+		}
+		else {
+			aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+			aiColor4D color(1.0f, 1.0f, 1.0f, 1.0f);
+			if (material->Get(AI_MATKEY_COLOR_DIFFUSE, color) == AI_SUCCESS) {
+				colors.push_back(XMFLOAT4(color.r, color.g, color.b, color.a));
+			}
+			else {
+				colors.push_back(XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
+			}
 		}
 	}
 

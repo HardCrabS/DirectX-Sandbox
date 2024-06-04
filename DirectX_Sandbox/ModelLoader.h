@@ -22,6 +22,6 @@ typedef struct
 class ModelLoader
 {
 public:
-	static void LoadModel(const std::string filename, vector<XMFLOAT3>& vertices, vector<XMFLOAT3>& normals,
-		vector<XMFLOAT2>& textCoords, vector<DWORD>& indices);
+	static void LoadModel(const std::string filename, vector<XMFLOAT3>& vertices, vector<XMFLOAT4>& colors, 
+		vector<XMFLOAT3>& normals, vector<XMFLOAT2>& textCoords, vector<DWORD>& indices);
 };

@@ -82,6 +82,7 @@ void Graphics::Init(int width, int height, HINSTANCE hInstance, HWND hwnd)
 
 void Graphics::CleanUp()
 {
+	// TODO: use COM smart pointers
 	SwapChain->Release();
 	d3d11Device->Release();
 	d3d11DevCon->Release();

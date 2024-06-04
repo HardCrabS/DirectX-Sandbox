@@ -1,5 +1,6 @@
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d3dcompiler.lib")
+#pragma comment(lib, "DirectXTex.lib")
 
 #include "framework.h"
 #include <d3d11.h>
@@ -10,11 +11,11 @@
 #include <memory>
 #include <iostream>
 #include <fstream>
-
 #include "Graphics.h"
 #include "GameWorld.h"
 #include "InputManager.h"
 #include "Logger.h"
+
 using namespace DirectX;
 
 

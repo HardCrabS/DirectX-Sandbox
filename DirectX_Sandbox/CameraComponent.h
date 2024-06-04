@@ -15,8 +15,8 @@ public:
 	const float ORBIT_SENSITIVITY = 0.01f;
 	const float ZOOM_SENSITIVITY = 0.5f;
 	float currentDistance;
-	const float MIN_DIST = 6.f;
-	const float MAX_DIST = 10.f;
+	const float MIN_DIST = 1.f;
+	const float MAX_DIST = 20.f;
 
 	CameraComponent(const XMVECTOR& target, const XMVECTOR& up,
 		float fovDegrees, float aspectRatio, float nearZ, float farZ)

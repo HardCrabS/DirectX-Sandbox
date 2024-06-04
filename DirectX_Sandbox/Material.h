@@ -3,6 +3,7 @@
 #include <vector>
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
+#include <DirectXTex.h>
 #include "Logger.h"
 #include "Utils.h"
 
@@ -13,6 +14,7 @@ struct VertexConstantBuffer
 
 class Material
 {
+protected:
 	ID3D11VertexShader* VS;
 	ID3D11PixelShader* PS;
 	ID3D10Blob* VS_Buffer;
@@ -21,6 +23,7 @@ class Material
 	std::vector<D3D11_INPUT_ELEMENT_DESC> layout;
 	D3D_PRIMITIVE_TOPOLOGY topology;
 
+	// constant buffers
 	ID3D11Buffer* cbBuffer;
 	VertexConstantBuffer constantBuffer;
 
@@ -32,8 +35,8 @@ class Material
 
 protected:
 	virtual void CreateShaders();
-	virtual void CreateInputLayout();
-	virtual void CreateConstantBuffers();
+	virtual void CreateInputLayout() = 0;
+	virtual void CreateBuffers();
 	virtual void CleanUp();
 public:
 	Material(LPCWSTR vsFilename, LPCSTR vsName, LPCWSTR psFilename, LPCSTR psName);

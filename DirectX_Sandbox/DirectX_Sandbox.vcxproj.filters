@@ -111,6 +111,12 @@
     <ClInclude Include="Utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SurfaceMaterial.h">
+      <Filter>Header Files\Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="SolidMaterial.h">
+      <Filter>Header Files\Materials</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -164,6 +170,12 @@
     <ClCompile Include="Utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SurfaceMaterial.cpp">
+      <Filter>Source Files\Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="SolidMaterial.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectX_Sandbox.rc">
@@ -179,7 +191,7 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="shaders.fx" />
+    <FxCompile Include="surface.fx" />
     <FxCompile Include="solid.fx" />
   </ItemGroup>
 </Project>
