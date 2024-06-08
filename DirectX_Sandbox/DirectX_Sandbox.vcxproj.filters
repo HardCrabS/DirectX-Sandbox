@@ -117,6 +117,9 @@
     <ClInclude Include="SolidMaterial.h">
       <Filter>Header Files\Materials</Filter>
     </ClInclude>
+    <ClInclude Include="SkyboxMaterial.h">
+      <Filter>Header Files\Materials</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -158,9 +161,6 @@
     <ClCompile Include="Graphics.cpp">
       <Filter>Source Files\Singletons</Filter>
     </ClCompile>
-    <ClCompile Include="InputManager.cpp">
-      <Filter>Source Files\Singletons</Filter>
-    </ClCompile>
     <ClCompile Include="Logger.cpp">
       <Filter>Source Files\Singletons</Filter>
     </ClCompile>
@@ -173,8 +173,14 @@
     <ClCompile Include="SurfaceMaterial.cpp">
       <Filter>Source Files\Materials</Filter>
     </ClCompile>
+    <ClCompile Include="SkyboxMaterial.cpp">
+      <Filter>Source Files\Materials</Filter>
+    </ClCompile>
     <ClCompile Include="SolidMaterial.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="InputManager.cpp">
+      <Filter>Source Files\Singletons</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -193,5 +199,6 @@
   <ItemGroup>
     <FxCompile Include="surface.fx" />
     <FxCompile Include="solid.fx" />
+    <FxCompile Include="skybox.fx" />
   </ItemGroup>
 </Project>

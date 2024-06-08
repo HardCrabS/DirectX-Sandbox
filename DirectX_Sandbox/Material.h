@@ -42,6 +42,7 @@ public:
 	Material(LPCWSTR vsFilename, LPCSTR vsName, LPCWSTR psFilename, LPCSTR psName);
 	virtual void UpdateResources(DirectX::XMMATRIX worldMatrix, DirectX::XMMATRIX viewMatrix,
 		DirectX::XMMATRIX projectionMatrix);
+	virtual void PostDrawCleanUp() {}
 	virtual void Initialize();
 	void SetDeviceAndDevcon(ID3D11Device* device, ID3D11DeviceContext* devcon) { 
 		this->device = device; this->devcon = devcon; 

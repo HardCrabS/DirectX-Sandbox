@@ -15,10 +15,10 @@ class MeshData
 
 private:
 	void LoadFromFile(const std::string& path);
-	void CreatePrimitive(PrimitiveType primitiveType);
+	void CreatePrimitive(PrimitiveType primitiveType, bool invert=false);
 public:
 	MeshData(const std::string& path) { LoadFromFile(path); }
-	MeshData(PrimitiveType primitiveType) { CreatePrimitive(primitiveType); }
+	MeshData(PrimitiveType primitiveType, bool invert=false) { CreatePrimitive(primitiveType, invert); }
 
 	std::vector<Vertex>& GetVertices() { return vertices; }
 	std::vector<DWORD>& GetIndices() { return indices; }
@@ -41,7 +41,9 @@ public:
 
 class CubePrimitive : public Primitive
 {
+	bool inverseTriangles = false;
 public:
+	CubePrimitive(bool invertTriangles=false) : inverseTriangles(inverseTriangles) {}
 	std::vector<Vertex> GetVertices() override;
 	std::vector<DWORD> GetIndices() override;
 };

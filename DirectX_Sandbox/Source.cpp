@@ -258,4 +258,6 @@ void CreateConsole() {
     std::wcout.clear();
     std::wcerr.clear();
     std::wcin.clear();
+
+    ShowWindow(GetConsoleWindow(), SW_MINIMIZE);
 }

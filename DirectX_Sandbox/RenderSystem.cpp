@@ -35,6 +35,8 @@ void RenderSystem::UpdateEntity(Entity* entity)
     devcon->IASetVertexBuffers(0, 1, &meshComponent->pVertexBuffer, &stride, &offset);
 
     devcon->DrawIndexed(meshComponent->indexCount, 0, 0);
+
+    meshComponent->material->PostDrawCleanUp();
 }
 
 void RenderSystem::UpdateMaterial(TransformComponent* transform, MeshComponent* mesh)
