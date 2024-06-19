@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <memory>
 #include <vector>
+#include "ResourcesContainer.h"
 #include "Vertex.h"
 #include "Material.h"
 
@@ -19,6 +20,7 @@ class Graphics
 	ID3D11DepthStencilView* depthStencilView;
 	ID3D11Texture2D* depthStencilBuffer;
 
+	ResourcesContainer resourcesContainer;
 	std::vector<std::unique_ptr<Material>> materials;
 
 	int Width, Height;
@@ -46,4 +48,5 @@ public:
 
 	ID3D11Device* GetDevice() { return d3d11Device; }
 	ID3D11DeviceContext* GetDeviceContext() { return d3d11DevCon; }
+	ResourcesContainer& GetResourcesContainer() { return resourcesContainer; }
 };

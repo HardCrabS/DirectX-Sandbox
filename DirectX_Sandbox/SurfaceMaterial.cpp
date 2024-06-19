@@ -1,16 +1,16 @@
 #include "SurfaceMaterial.h"
 
-SurfaceMaterial::SurfaceMaterial(LPCWSTR texture0Path) 
-	: Material(L"surface.fx", "VS", L"surface.fx", "PS"), texture0Path(texture0Path)
+SurfaceMaterial::SurfaceMaterial(ID3D11ShaderResourceView* texture0)
+	: Material(L"surface.fx", "VS", L"surface.fx", "PS"), texture0(texture0)
 {
-
 }
 
 void SurfaceMaterial::UpdateResources(DirectX::XMMATRIX worldMatrix, DirectX::XMMATRIX viewMatrix, DirectX::XMMATRIX projectionMatrix)
 {
 	Material::UpdateResources(worldMatrix, viewMatrix, projectionMatrix);
 
-	devcon->PSSetShaderResources(0, 1, &texture0);
+	if (texture0 != nullptr)
+		devcon->PSSetShaderResources(0, 1, &texture0);
 	devcon->PSSetSamplers(0, 1, &samplerLinear);
 }
 
@@ -34,12 +34,12 @@ void SurfaceMaterial::CreateBuffers()
 	Material::CreateBuffers();
 
 	// texture resources
-	DirectX::TexMetadata metadata;
-	DirectX::ScratchImage image;
-	HRESULT hr = DirectX::LoadFromWICFile(texture0Path, DirectX::WIC_FLAGS_NONE, &metadata, image);
-	assert(!FAILED(hr));
-	hr = DirectX::CreateShaderResourceView(device, image.GetImages(), image.GetImageCount(), metadata, &texture0);
-	assert(!FAILED(hr));
+	//DirectX::TexMetadata metadata;
+	//DirectX::ScratchImage image;
+	//HRESULT hr = DirectX::LoadFromWICFile(texture0Path, DirectX::WIC_FLAGS_NONE, &metadata, image);
+	//assert(!FAILED(hr));
+	//hr = DirectX::CreateShaderResourceView(device, image.GetImages(), image.GetImageCount(), metadata, &texture0);
+	//assert(!FAILED(hr));
 
 	D3D11_SAMPLER_DESC sampDesc;
 	ZeroMemory(&sampDesc, sizeof(sampDesc));
@@ -51,7 +51,7 @@ void SurfaceMaterial::CreateBuffers()
 	sampDesc.MinLOD = 0;
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
-	hr = device->CreateSamplerState(&sampDesc, &samplerLinear);
+	HRESULT hr = device->CreateSamplerState(&sampDesc, &samplerLinear);
 	assert(!FAILED(hr));
 }
 
@@ -59,6 +59,6 @@ void SurfaceMaterial::CleanUp()
 {
 	Material::CleanUp();
 
-	texture0->Release();
+	//texture0->Release();
 	samplerLinear->Release();
 }

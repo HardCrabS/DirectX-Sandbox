@@ -15,15 +15,14 @@ class SkyboxMaterial : public Material
 	ID3D11Buffer* cbSkyboxBuffer;
 	SkyboxBuffer skyboxBufferData;
 
-	LPCWSTR texturePath;
+	std::string texturePath;
 	ID3D11ShaderResourceView* skyboxCubeTexture;
 	ID3D11SamplerState* samplerLinear;
 
 	ID3D11DepthStencilState* DSLessEqual;
 
 public:
-	// TODO: implement child-parent transform system so that skybox mesh is always bound to camera
-	SkyboxMaterial(LPCWSTR texturePath, TransformComponent* cameraTransform);
+	SkyboxMaterial(std::string texturePath, TransformComponent* cameraTransform);
 	void UpdateResources(DirectX::XMMATRIX worldMatrix, DirectX::XMMATRIX viewMatrix,
 		DirectX::XMMATRIX projectionMatrix) override;
 	void PostDrawCleanUp() override;

@@ -7,6 +7,7 @@
 #include "Graphics.h"
 #include "MeshData.h"
 #include "Material.h"
+#include "Model.h"
 
 class MeshComponent : public Component<MeshComponent>
 {

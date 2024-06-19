@@ -78,6 +78,8 @@ void Graphics::Init(int width, int height, HINSTANCE hInstance, HWND hwnd)
 
 	//Set the Viewport
 	d3d11DevCon->RSSetViewports(1, &viewport);
+
+	resourcesContainer.Initialize(d3d11Device, d3d11DevCon);
 }
 
 void Graphics::CleanUp()

@@ -1,7 +1,8 @@
 #include "SkyboxMaterial.h"
 
-SkyboxMaterial::SkyboxMaterial(LPCWSTR texturePath, TransformComponent* cameraTransform) 
-	: Material(L"skybox.fx", "VS", L"skybox.fx", "PS"), texturePath(texturePath), cameraTransform(cameraTransform)
+SkyboxMaterial::SkyboxMaterial(std::string texturePath, TransformComponent* cameraTransform)
+	: Material(L"skybox.fx", "VS", L"skybox.fx", "PS"),
+	cameraTransform(cameraTransform), texturePath(texturePath)
 {
 
 }
@@ -9,8 +10,6 @@ SkyboxMaterial::SkyboxMaterial(LPCWSTR texturePath, TransformComponent* cameraTr
 void SkyboxMaterial::UpdateResources(DirectX::XMMATRIX worldMatrix, DirectX::XMMATRIX viewMatrix, 
 	DirectX::XMMATRIX projectionMatrix)
 {
-	//Material::UpdateResources(worldMatrix, viewMatrix, projectionMatrix);
-
 	viewMatrix.r[3] = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
 	skyboxBufferData.ViewProjectionMatrix = DirectX::XMMatrixTranspose(viewMatrix * projectionMatrix);
 	DirectX::XMStoreFloat4(&skyboxBufferData.cameraPosition, cameraTransform->GetPosition());
@@ -39,13 +38,11 @@ void SkyboxMaterial::CreateInputLayout()
 
 	HRESULT hr = device->CreateInputLayout(&layout[0], numElements, VS_Buffer->GetBufferPointer(),
 		VS_Buffer->GetBufferSize(), &vertLayout);
-	assert(!FAILED(hr));
+	assert(SUCCEEDED(hr));
 }
 
 void SkyboxMaterial::CreateBuffers()
 {
-	//Material::CreateBuffers();
-
 	// cb
 	D3D11_BUFFER_DESC cbbd;
 	ZeroMemory(&cbbd, sizeof(D3D11_BUFFER_DESC));
@@ -55,15 +52,15 @@ void SkyboxMaterial::CreateBuffers()
 	cbbd.CPUAccessFlags = 0;
 	cbbd.MiscFlags = 0;
 	HRESULT hr = device->CreateBuffer(&cbbd, NULL, &cbSkyboxBuffer);
-	assert(!FAILED(hr));
+	assert(SUCCEEDED(hr));
 
-	// texture
+	// texture TODO: redo in ResourcesContainer
 	DirectX::TexMetadata metadata;
 	DirectX::ScratchImage image;
-	hr = DirectX::LoadFromDDSFile(texturePath, DirectX::DDS_FLAGS_NONE, &metadata, image);
-	assert(!FAILED(hr));
+	hr = DirectX::LoadFromDDSFile(Utils::StringToWString(texturePath).c_str(), DirectX::DDS_FLAGS_NONE, &metadata, image);
+	assert(SUCCEEDED(hr));
 	hr = DirectX::CreateShaderResourceView(device, image.GetImages(), image.GetImageCount(), metadata, &skyboxCubeTexture);
-	assert(!FAILED(hr));
+	assert(SUCCEEDED(hr));
 
 	D3D11_SAMPLER_DESC sampDesc;
 	ZeroMemory(&sampDesc, sizeof(sampDesc));
@@ -76,7 +73,7 @@ void SkyboxMaterial::CreateBuffers()
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
 	hr = device->CreateSamplerState(&sampDesc, &samplerLinear);
-	assert(!FAILED(hr));
+	assert(SUCCEEDED(hr));
 
 	D3D11_DEPTH_STENCIL_DESC dssDesc;
 	ZeroMemory(&dssDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
@@ -85,7 +82,7 @@ void SkyboxMaterial::CreateBuffers()
 	dssDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 
 	hr = device->CreateDepthStencilState(&dssDesc, &DSLessEqual);
-	//assert(!FAILED(hr));
+	assert(SUCCEEDED(hr));
 }
 
 void SkyboxMaterial::CleanUp()

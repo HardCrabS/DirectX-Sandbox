@@ -3,9 +3,12 @@
 #include <string>
 #include <d3d11.h>
 #include "Vertex.h"
-#include "ModelLoader.h"
 
-enum PrimitiveType;
+enum PrimitiveType
+{
+	Cube,
+	Sphere,
+};
 class Primitive;
 
 class MeshData
@@ -17,20 +20,15 @@ private:
 	void LoadFromFile(const std::string& path);
 	void CreatePrimitive(PrimitiveType primitiveType, bool invert=false);
 public:
-	MeshData(const std::string& path) { LoadFromFile(path); }
+	MeshData() {}
+	//MeshData(const std::string& path) { LoadFromFile(path); }
 	MeshData(PrimitiveType primitiveType, bool invert=false) { CreatePrimitive(primitiveType, invert); }
 
+	void SetVertices(std::vector<Vertex>& v) { vertices = std::move(v); }
+	void SetIndices(std::vector<DWORD>& i) { indices = std::move(i); }
 	std::vector<Vertex>& GetVertices() { return vertices; }
 	std::vector<DWORD>& GetIndices() { return indices; }
 };
-
-
-enum PrimitiveType
-{
-	Cube,
-	Sphere,
-};
-
 
 class Primitive
 {
