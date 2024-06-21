@@ -10,7 +10,7 @@ class RenderSystem : public System
 {
 	CameraComponent* cameraToRenderFrom;
 private:
-	void UpdateMaterial(TransformComponent* transform, MeshComponent* mesh);
+	void UpdateMaterial(Material* material, TransformComponent* transform);
 public:
 	RenderSystem() : cameraToRenderFrom(nullptr) {}
 	void Initialize() override;

@@ -26,29 +26,36 @@ void RenderSystem::UpdateEntity(Entity* entity)
 
     ID3D11DeviceContext* devcon = Graphics::getInstance().GetDeviceContext();
 
-    UpdateMaterial(transformComponent, meshComponent);
+    std::vector<MeshData> meshData = meshComponent->GetMeshData();
+    for (int i = 0; i < meshData.size(); i++)
+    {
+        MeshData* subMeshData = &meshData[i];
+        Material* material = meshComponent->GetMaterial(subMeshData->GetMaterialIndex());
+        UpdateMaterial(material, transformComponent);
 
-    devcon->IASetIndexBuffer(meshComponent->pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+        devcon->IASetIndexBuffer(meshComponent->GetIndexBuffer(i), DXGI_FORMAT_R32_UINT, 0);
 
-    UINT stride = sizeof(Vertex);
-    UINT offset = 0;
-    devcon->IASetVertexBuffers(0, 1, &meshComponent->pVertexBuffer, &stride, &offset);
+        UINT stride = sizeof(Vertex);
+        UINT offset = 0;
+        ID3D11Buffer* vertexBuffer = meshComponent->GetVertexBuffer(i);
+        devcon->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
 
-    devcon->DrawIndexed(meshComponent->indexCount, 0, 0);
+        devcon->DrawIndexed(subMeshData->GetNumOfIndices(), 0, 0);
 
-    meshComponent->material->PostDrawCleanUp();
+        material->PostDrawCleanUp();
+    }
 }
 
-void RenderSystem::UpdateMaterial(TransformComponent* transform, MeshComponent* mesh)
+void RenderSystem::UpdateMaterial(Material* material, TransformComponent* transform)
 {
     auto devcon = Graphics::getInstance().GetDeviceContext();
 
-    devcon->VSSetShader(mesh->material->GetVS(), 0, 0);
-    devcon->PSSetShader(mesh->material->GetPS(), 0, 0);
+    devcon->VSSetShader(material->GetVS(), 0, 0);
+    devcon->PSSetShader(material->GetPS(), 0, 0);
 
-    devcon->IASetInputLayout(mesh->material->GetVertLayout());
-    devcon->IASetPrimitiveTopology(mesh->material->GetTopology());
+    devcon->IASetInputLayout(material->GetVertLayout());
+    devcon->IASetPrimitiveTopology(material->GetTopology());
 
-    mesh->material->UpdateResources(transform->GetWorldMatrix(), cameraToRenderFrom->viewMatrix,
+    material->UpdateResources(transform->GetWorldMatrix(), cameraToRenderFrom->viewMatrix,
         cameraToRenderFrom->projectionMatrix);
 }

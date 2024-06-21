@@ -1,14 +1,35 @@
 #include "MeshComponent.h"
 
-MeshComponent::MeshComponent(MeshData meshData, Material* material) : material(material)
+MeshComponent::MeshComponent(const std::vector<MeshData>& meshData, 
+    const std::vector<Material*>& materials)
+: meshData(std::move(meshData)), materials(std::move(materials))
 {
     logInfo("Created MeshComponent");
 
+    int numOfSubMeshes = meshData.size();
+    pVertexBuffers.resize(numOfSubMeshes);
+    pIndexBuffers.resize(numOfSubMeshes);
+
+    for(int i = 0; i < numOfSubMeshes; i++)
+    {
+        ProcessSubMesh(meshData[i], i);
+    }
+}
+
+MeshComponent::~MeshComponent()
+{
+    assert(pVertexBuffers.size() == pIndexBuffers.size());
+	for (int i = 0; i < pVertexBuffers.size(); ++i)
+	{
+        pVertexBuffers[i]->Release();
+        pIndexBuffers[i]->Release();
+	}
+}
+
+void MeshComponent::ProcessSubMesh(const MeshData& meshData, int index)
+{
     auto vertices = meshData.GetVertices();
     auto indices = meshData.GetIndices();
-
-    this->vertexCount = vertices.size();
-    this->indexCount = indices.size();
 
     ID3D11Device* device = Graphics::getInstance().GetDevice();
 
@@ -17,22 +38,22 @@ MeshComponent::MeshComponent(MeshData meshData, Material* material) : material(m
     ZeroMemory(&ibd, sizeof(ibd));
 
     ibd.Usage = D3D11_USAGE_DEFAULT;
-    ibd.ByteWidth = sizeof(DWORD) * indexCount;
+    ibd.ByteWidth = sizeof(DWORD) * meshData.GetNumOfIndices();
     ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
     ibd.CPUAccessFlags = 0;
 
     D3D11_SUBRESOURCE_DATA iinitData;
     iinitData.pSysMem = &indices[0];
 
-    HRESULT hr = device->CreateBuffer(&ibd, &iinitData, &pIndexBuffer);
-    assert(!FAILED(hr));
+    HRESULT hr = device->CreateBuffer(&ibd, &iinitData, &pIndexBuffers[index]);
+    assert(SUCCEEDED(hr));
 
     // vertex buffer
     D3D11_BUFFER_DESC bd;
     ZeroMemory(&bd, sizeof(bd));
 
     bd.Usage = D3D11_USAGE_DEFAULT;
-    bd.ByteWidth = sizeof(Vertex) * vertexCount;
+    bd.ByteWidth = sizeof(Vertex) * meshData.GetNumOfVertices();
     bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
     bd.CPUAccessFlags = 0;
 
@@ -40,12 +61,6 @@ MeshComponent::MeshComponent(MeshData meshData, Material* material) : material(m
     ZeroMemory(&vertexBufferData, sizeof(vertexBufferData));
     vertexBufferData.pSysMem = &vertices[0];
 
-    hr = device->CreateBuffer(&bd, &vertexBufferData, &pVertexBuffer);
-    assert(!FAILED(hr));
-}
-
-MeshComponent::~MeshComponent()
-{
-    pVertexBuffer->Release();
-    pIndexBuffer->Release();
+    hr = device->CreateBuffer(&bd, &vertexBufferData, &pVertexBuffers[index]);
+    assert(SUCCEEDED(hr));
 }
