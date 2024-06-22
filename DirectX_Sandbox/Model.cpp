@@ -5,74 +5,12 @@
 #include "SolidMaterial.h"
 #include "SurfaceMaterial.h"
 
-void Model::LoadModel(const std::string filename, vector<XMFLOAT3>& vertices, vector<XMFLOAT4>& colors,
-                      vector<XMFLOAT3>& normals, vector<XMFLOAT2>& textCoords, vector<DWORD>& indices) {
-	Assimp::Importer importer;
 
-	const aiScene* scene = importer.ReadFile(filename,
-		aiProcess_Triangulate |
-		aiProcess_FlipUVs |
-		aiProcess_CalcTangentSpace |
-		aiProcess_GenSmoothNormals);
+void logNodeHierarchy(aiNode* node);
+void LogMaterialInfo(const aiMaterial* material, int index);
 
-	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
-		logError(std::string("ASSIMP::") + importer.GetErrorString());
-		// TODO: make proper exception instead of assert
-		assert(false && "Could not open the file");
-		return;
-	}
 
-	aiMesh* mesh = scene->mMeshes[0];
-
-	vertices.reserve(mesh->mNumVertices);
-	normals.reserve(mesh->mNumVertices);
-	textCoords.reserve(mesh->mNumVertices);
-	indices.reserve(mesh->mNumFaces * 3);
-
-	for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
-		// Vertices
-		aiVector3D pos = mesh->mVertices[i];
-		vertices.push_back(XMFLOAT3(pos.x, pos.y, pos.z));
-
-		// Normals
-		aiVector3D normal = mesh->mNormals[i];
-		normals.push_back(XMFLOAT3(normal.x, normal.y, normal.z));
-
-		// Texture coordinates
-		if (mesh->mTextureCoords[0]) {
-			aiVector3D texCoord = mesh->mTextureCoords[0][i];
-			textCoords.push_back(XMFLOAT2(texCoord.x, texCoord.y));
-		}
-		else {
-			textCoords.push_back(XMFLOAT2(0.0f, 0.0f));
-		}
-
-		// Colors
-		if (mesh->HasVertexColors(0)) {
-			aiColor4D color = mesh->mColors[0][i];
-			colors.push_back(XMFLOAT4(color.r, color.g, color.b, color.a));
-		}
-		else {
-			aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-			aiColor4D color(1.0f, 1.0f, 1.0f, 1.0f);
-			if (material->Get(AI_MATKEY_COLOR_DIFFUSE, color) == AI_SUCCESS) {
-				colors.push_back(XMFLOAT4(color.r, color.g, color.b, color.a));
-			}
-			else {
-				colors.push_back(XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
-			}
-		}
-	}
-
-	for (unsigned int i = 0; i < mesh->mNumFaces; ++i) {
-		aiFace face = mesh->mFaces[i];
-		for (unsigned int j = 0; j < face.mNumIndices; ++j) {
-			indices.push_back(face.mIndices[j]);
-		}
-	}
-}
-
-std::pair<MeshData, Material*> Model::LoadModel(const std::string& filename)
+void Model::LoadModel(const std::string& filename)
 {
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(filename,
@@ -83,26 +21,42 @@ std::pair<MeshData, Material*> Model::LoadModel(const std::string& filename)
 
 	logInfo("[Model] ============= Loading model: " + filename);
 
-	MeshData meshData;
-	Material* material = nullptr;
-
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
 		logError(std::string("ASSIMP::") + importer.GetErrorString());
 		// TODO: make proper exception instead of assert
 		assert(false && "Could not open the file");
-		return std::make_pair(meshData, material);
+		return;
 	}
 
+	meshData.resize(scene->mNumMeshes);
+	materials.resize(scene->mNumMaterials);
+
+	ProcessNode(scene->mRootNode, scene);
+}
+
+void Model::ProcessNode(aiNode* node, const aiScene* scene)
+{
+	for (int i = 0; i < node->mNumMeshes; i++)
+	{
+		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+		std::pair<MeshData, Material*> processedMesh = ProcessMesh(mesh, scene);
+
+		meshData[node->mMeshes[i]] = processedMesh.first;
+		materials[processedMesh.first.GetMaterialIndex()] = processedMesh.second;
+	}
+
+	for (int i = 0; i < node->mNumChildren; ++i)
+	{
+		ProcessNode(node->mChildren[i], scene);
+	}
+}
+
+std::pair<MeshData, Material*> Model::ProcessMesh(const aiMesh* mesh, const aiScene* scene)
+{
+	// Load mesh
 	std::vector<Vertex> vertices;
 	std::vector<DWORD> indices;
 
-	logInfo("[Model] Number of meshed found: " + std::to_string(scene->mNumMeshes));
-	for (int i = 0; i < scene->mNumMeshes; i++)
-	{
-		logInfo("[Model] Submesh name: " + std::string(scene->mMeshes[i]->mName.C_Str()) + 
-		" numOfVertices: " + std::to_string(scene->mMeshes[i]->mNumVertices));
-	}
-	aiMesh* mesh = scene->mMeshes[0];
 	for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
 		Vertex vertex;
 		// Vertices
@@ -129,21 +83,15 @@ std::pair<MeshData, Material*> Model::LoadModel(const std::string& filename)
 		}
 	}
 
-	meshData.SetVertices(vertices);
-	meshData.SetIndices(indices);
+	MeshData subMeshData;
+	subMeshData.SetVertices(vertices);
+	subMeshData.SetIndices(indices);
+	subMeshData.SetMaterialIndex(mesh->mMaterialIndex);
 
-	logInfo("[Model] Number of materials found: " + std::to_string(scene->mNumMaterials));
-	for (int i = 0; i < scene->mNumMaterials; i++)
-	{
-		aiMaterial* aiMaterial = scene->mMaterials[i];
-		aiColor4D color;
-		bool foundColor = (AI_SUCCESS == aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_DIFFUSE, &color));
-		logInfo("[Model] Submaterial: " + std::string(aiMaterial->GetName().C_Str()) + 
-			" textureCount: " + std::to_string(aiMaterial->GetTextureCount(aiTextureType_DIFFUSE)) + 
-		" foundColor: " + std::to_string(foundColor));
-	}
-
+	// Load material
+	Material* material;
 	aiMaterial* aiMaterial = scene->mMaterials[mesh->mMaterialIndex];
+
 	if (aiMaterial->GetTextureCount(aiTextureType_DIFFUSE) > 0)
 	{
 		aiString path;
@@ -167,7 +115,6 @@ std::pair<MeshData, Material*> Model::LoadModel(const std::string& filename)
 					std::make_unique<SurfaceMaterial>(shaderResource));
 			}
 		}
-
 	}
 	else
 	{
@@ -179,11 +126,106 @@ std::pair<MeshData, Material*> Model::LoadModel(const std::string& filename)
 		}
 		else
 		{
-			logInfo("[Model] No textures were found! Pink color returned.");
+			logError("[Model] No textures were found! Pink color returned.");
+			LogMaterialInfo(aiMaterial, mesh->mMaterialIndex);
 			material = Graphics::getInstance().RegisterMaterial(
 				std::make_unique<SolidMaterial>(XMFLOAT4(1, 0.8f, 0.85f, 1)));
 		}
 	}
 
-	return std::make_pair(meshData, material);
+	return std::make_pair(subMeshData, material);
+}
+
+void logNodeHierarchy(aiNode* node)
+{
+	logInfo("ChildNode: " + std::string(node->mName.C_Str()));
+
+	logInfo("numOfMeshes: " + std::to_string(node->mNumMeshes));
+
+	for (int i = 0; i < node->mNumChildren; i++)
+	{
+		logNodeHierarchy(node->mChildren[i]);
+	}
+}
+
+void LogMaterialInfo(const aiMaterial* material, int index)
+{
+	logInfo("*******************************LogMaterialInfo************************************");
+	std::ostringstream oss;
+	oss << "Material " << index << ":\n";
+	logInfo(oss.str());
+
+	aiString path;
+	// Check for diffuse texture
+	if (material->GetTexture(aiTextureType_DIFFUSE, 0, &path) == AI_SUCCESS) {
+		oss.str(""); oss << "  Diffuse texture: " << path.C_Str();
+		logInfo(oss.str());
+	}
+	else {
+		logInfo("  No diffuse texture.");
+	}
+
+	// Check for base color texture
+	if (material->GetTexture(aiTextureType_BASE_COLOR, 0, &path) == AI_SUCCESS) {
+		oss.str(""); oss << "  Base color texture: " << path.C_Str();
+		logInfo(oss.str());
+	}
+	else {
+		logInfo("  No base color texture.");
+	}
+
+	// Check for other textures (specular, normal, etc.)
+	if (material->GetTexture(aiTextureType_SPECULAR, 0, &path) == AI_SUCCESS) {
+		oss.str(""); oss << "  Specular texture: " << path.C_Str();
+		logInfo(oss.str());
+	}
+	else {
+		logInfo("  No specular texture.");
+	}
+
+	if (material->GetTexture(aiTextureType_NORMALS, 0, &path) == AI_SUCCESS) {
+		oss.str(""); oss << "  Normal texture: " << path.C_Str();
+		logInfo(oss.str());
+	}
+	else {
+		logInfo("  No normal texture.");
+	}
+
+	aiColor4D color;
+	// Check for colors
+	if (AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, &color)) {
+		oss.str(""); oss << "  Diffuse color: " << color.r << ", " << color.g << ", " << color.b << ", " << color.a;
+		logInfo(oss.str());
+	}
+	else {
+		logInfo("  No diffuse color.");
+	}
+
+	if (AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, &color)) {
+		oss.str(""); oss << "  Specular color: " << color.r << ", " << color.g << ", " << color.b << ", " << color.a;
+		logInfo(oss.str());
+	}
+	else {
+		logInfo("  No specular color.");
+	}
+
+	if (AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_AMBIENT, &color)) {
+		oss.str(""); oss << "  Ambient color: " << color.r << ", " << color.g << ", " << color.b << ", " << color.a;
+		logInfo(oss.str());
+	}
+	else {
+		logInfo("  No ambient color.");
+	}
+
+	// Check for shininess
+	float shininess;
+	if (AI_SUCCESS == aiGetMaterialFloat(material, AI_MATKEY_SHININESS, &shininess)) {
+		oss.str(""); oss << "  Shininess: " << shininess;
+		logInfo(oss.str());
+	}
+	else {
+		logInfo("  No shininess.");
+	}
+
+	logInfo("*******************************************************************");
 }

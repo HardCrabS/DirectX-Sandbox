@@ -1,29 +1,6 @@
 #include "MeshData.h"
 #include <memory>
 
-void MeshData::LoadFromFile(const std::string& path)
-{
-	//vector<XMFLOAT3> vertices;
-	//vector<XMFLOAT4> colors;
-	//vector<XMFLOAT3> normals;
-	//vector<XMFLOAT2> textCoords;
-	//vector<DWORD> indices;
-
-	//Model::LoadModel(path, vertices, colors, normals, textCoords, indices);
-
-	//for (int i = 0; i < vertices.size(); i++)
-	//{
-	//	Vertex vertex;
-	//	vertex.pos = vertices[i];
-	//	vertex.color = colors[i];
-	//	vertex.normal = normals[i];
-	//	vertex.UV = textCoords[i];
-	//	this->vertices.push_back(vertex);
-	//}
-	//this->indices = indices;
-
-	//logInfo("Loaded model: " + path);
-}
 
 void MeshData::CreatePrimitive(PrimitiveType primitiveType, bool invert)
 {

@@ -14,15 +14,13 @@ class MeshComponent : public Component<MeshComponent>
 	std::vector<ID3D11Buffer*> pVertexBuffers;
 	std::vector<ID3D11Buffer*> pIndexBuffers;
 
-	std::vector<MeshData> meshData;
-	std::vector<Material*> materials;
+	Model model;
 
 public:
-	MeshComponent(const std::vector<MeshData>& meshData, const std::vector<Material*>& materials);
+	MeshComponent(const Model& model);
 	~MeshComponent();
 
-	const std::vector<MeshData>& GetMeshData() const { return meshData; }
-	Material* GetMaterial(int index) const { return materials[index]; }
+	const Model& GetModel() const { return model; }
 	ID3D11Buffer* GetVertexBuffer(int index) const { return pVertexBuffers[index]; }
 	ID3D11Buffer* GetIndexBuffer(int index) const { return pIndexBuffers[index]; }
 private:

@@ -39,7 +39,7 @@ void Graphics::Init(int width, int height, HINSTANCE hInstance, HWND hwnd)
 	//Create BackBuffer
 	ID3D11Texture2D* BackBuffer;
 	hr = SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&BackBuffer);
-	assert(!FAILED(hr));
+	assert(SUCCEEDED(hr));
 
 	//Create Render Target
 	hr = d3d11Device->CreateRenderTargetView(BackBuffer, NULL, &renderTargetView);

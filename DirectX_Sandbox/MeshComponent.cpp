@@ -1,11 +1,10 @@
 #include "MeshComponent.h"
 
-MeshComponent::MeshComponent(const std::vector<MeshData>& meshData, 
-    const std::vector<Material*>& materials)
-: meshData(std::move(meshData)), materials(std::move(materials))
+MeshComponent::MeshComponent(const Model& model) : model(std::move(model))
 {
     logInfo("Created MeshComponent");
 
+    auto meshData = model.GetMeshData();
     int numOfSubMeshes = meshData.size();
     pVertexBuffers.resize(numOfSubMeshes);
     pIndexBuffers.resize(numOfSubMeshes);

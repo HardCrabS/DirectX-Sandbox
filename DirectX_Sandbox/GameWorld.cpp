@@ -25,28 +25,17 @@ void GameWorld::InitScene()
 	ecsWorld->AddComponent(cameraEntity->GetID(), std::move(cameraTransformComponent));
 	ecsWorld->AddComponent(cameraEntity->GetID(), std::move(cameraComponent));
 
-	Entity* rectEntity1 = ecsWorld->CreateEntity();
-	Model model1;
-	std::pair<MeshData, Material*> modelData1 = model1.LoadModel("../Assets/Models/Chicken/Chicken_01.obj");
-	std::vector<MeshData> meshData1 = { modelData1.first };
-	std::vector<Material*> mats1 = { modelData1.second };
-	auto meshComponent = std::make_unique<MeshComponent>(meshData1, mats1);
-	auto transformComponent = std::make_unique<TransformComponent>();
-	transformComponent->Scale(XMVectorSet(.1f, .1f, .1f, 1.0f));
-	ecsWorld->AddComponent(rectEntity1->GetID(), std::move(meshComponent));
-	ecsWorld->AddComponent(rectEntity1->GetID(), std::move(transformComponent));
+	//Entity* rectEntity1 = ecsWorld->CreateEntity();
+	//auto meshComponent = std::make_unique<MeshComponent>(Model("../Assets/Models/Chicken/Chicken_01.obj"));
+	//auto transformComponent = std::make_unique<TransformComponent>();
+	//transformComponent->Translate(XMVectorSet(0, -10, 0, 1.0f));
+	//transformComponent->Scale(XMVectorSet(.1f, .1f, .1f, 1.0f));
+	//ecsWorld->AddComponent(rectEntity1->GetID(), std::move(meshComponent));
+	//ecsWorld->AddComponent(rectEntity1->GetID(), std::move(transformComponent));
 
 	Entity* rectEntity2 = ecsWorld->CreateEntity();
-	Material* mat2 = graphics->RegisterMaterial(
-		std::make_unique<SurfaceMaterial>(graphics->GetResourcesContainer().GetTexture(
-			"../Assets/Textures/cat.jpg")));
-	Model model;
-	std::pair<MeshData, Material*> modelData = model.LoadModel("../Assets/Models/Planet_1.fbx");
-	std::vector<MeshData> meshData2 = { modelData.first };
-	std::vector<Material*> mats2 = { modelData.second };
-	auto meshComponent2 = std::make_unique<MeshComponent>(meshData2, mats2);
+	auto meshComponent2 = std::make_unique<MeshComponent>(Model("../Assets/Models/BoxOfCigars/model.obj"));
 	auto transformComponent2 = std::make_unique<TransformComponent>();
-	transformComponent2->Translate(XMVectorSet(-4.0f, .0f, 0.0f, 0.0f));
 	ecsWorld->AddComponent(rectEntity2->GetID(), std::move(meshComponent2));
 	ecsWorld->AddComponent(rectEntity2->GetID(), std::move(transformComponent2));
 

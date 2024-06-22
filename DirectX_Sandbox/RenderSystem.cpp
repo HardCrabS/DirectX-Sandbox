@@ -26,11 +26,11 @@ void RenderSystem::UpdateEntity(Entity* entity)
 
     ID3D11DeviceContext* devcon = Graphics::getInstance().GetDeviceContext();
 
-    std::vector<MeshData> meshData = meshComponent->GetMeshData();
+    std::vector<MeshData> meshData = meshComponent->GetModel().GetMeshData();
     for (int i = 0; i < meshData.size(); i++)
     {
         MeshData* subMeshData = &meshData[i];
-        Material* material = meshComponent->GetMaterial(subMeshData->GetMaterialIndex());
+        Material* material = meshComponent->GetModel().GetMaterial(subMeshData->GetMaterialIndex());
         UpdateMaterial(material, transformComponent);
 
         devcon->IASetIndexBuffer(meshComponent->GetIndexBuffer(i), DXGI_FORMAT_R32_UINT, 0);
