@@ -21,7 +21,6 @@ class Graphics
 	ID3D11Texture2D* depthStencilBuffer;
 
 	ResourcesContainer resourcesContainer;
-	std::vector<std::unique_ptr<Material>> materials;
 
 	int Width, Height;
 
@@ -41,7 +40,6 @@ public:
 	void CleanUp();
 	void ClearScreen();
 	void Present();
-	Material* RegisterMaterial(std::unique_ptr<Material> mat);
 
 	int GetWidth() const { return Width; }
 	int GetHeight() const { return Height; }

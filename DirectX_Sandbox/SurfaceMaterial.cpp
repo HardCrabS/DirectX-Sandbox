@@ -26,20 +26,12 @@ void SurfaceMaterial::CreateInputLayout()
 
 	HRESULT hr = device->CreateInputLayout(&layout[0], numElements, VS_Buffer->GetBufferPointer(),
 		VS_Buffer->GetBufferSize(), &vertLayout);
-	assert(!FAILED(hr));
+	assert(SUCCEEDED(hr));
 }
 
 void SurfaceMaterial::CreateBuffers()
 {
 	Material::CreateBuffers();
-
-	// texture resources
-	//DirectX::TexMetadata metadata;
-	//DirectX::ScratchImage image;
-	//HRESULT hr = DirectX::LoadFromWICFile(texture0Path, DirectX::WIC_FLAGS_NONE, &metadata, image);
-	//assert(!FAILED(hr));
-	//hr = DirectX::CreateShaderResourceView(device, image.GetImages(), image.GetImageCount(), metadata, &texture0);
-	//assert(!FAILED(hr));
 
 	D3D11_SAMPLER_DESC sampDesc;
 	ZeroMemory(&sampDesc, sizeof(sampDesc));
@@ -52,13 +44,12 @@ void SurfaceMaterial::CreateBuffers()
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
 	HRESULT hr = device->CreateSamplerState(&sampDesc, &samplerLinear);
-	assert(!FAILED(hr));
+	assert(SUCCEEDED(hr));
 }
 
 void SurfaceMaterial::CleanUp()
 {
 	Material::CleanUp();
 
-	//texture0->Release();
 	samplerLinear->Release();
 }

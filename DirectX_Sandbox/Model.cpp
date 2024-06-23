@@ -1,13 +1,12 @@
 #include "Model.h"
 #include <sstream>
-
 #include "Graphics.h"
 #include "SolidMaterial.h"
 #include "SurfaceMaterial.h"
 
 
 void logNodeHierarchy(aiNode* node);
-void LogMaterialInfo(const aiMaterial* material, int index);
+void LogMaterialInfo(const aiMaterial* material, unsigned int index);
 
 
 void Model::LoadModel(const std::string& filename)
@@ -39,10 +38,11 @@ void Model::ProcessNode(aiNode* node, const aiScene* scene)
 	for (int i = 0; i < node->mNumMeshes; i++)
 	{
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		std::pair<MeshData, Material*> processedMesh = ProcessMesh(mesh, scene);
+		MeshData processedSubMesh = ProcessMesh(mesh, scene);
+		std::shared_ptr<Material> material = ProcessMaterial(mesh, scene);
 
-		meshData[node->mMeshes[i]] = processedMesh.first;
-		materials[processedMesh.first.GetMaterialIndex()] = processedMesh.second;
+		meshData[node->mMeshes[i]] = processedSubMesh;
+		materials[processedSubMesh.GetMaterialIndex()] = material;
 	}
 
 	for (int i = 0; i < node->mNumChildren; ++i)
@@ -51,9 +51,8 @@ void Model::ProcessNode(aiNode* node, const aiScene* scene)
 	}
 }
 
-std::pair<MeshData, Material*> Model::ProcessMesh(const aiMesh* mesh, const aiScene* scene)
+MeshData Model::ProcessMesh(const aiMesh* mesh, const aiScene* scene)
 {
-	// Load mesh
 	std::vector<Vertex> vertices;
 	std::vector<DWORD> indices;
 
@@ -87,10 +86,23 @@ std::pair<MeshData, Material*> Model::ProcessMesh(const aiMesh* mesh, const aiSc
 	subMeshData.SetVertices(vertices);
 	subMeshData.SetIndices(indices);
 	subMeshData.SetMaterialIndex(mesh->mMaterialIndex);
+	return subMeshData;
+}
 
-	// Load material
-	Material* material;
+std::shared_ptr<Material> Model::ProcessMaterial(const aiMesh* mesh, const aiScene* scene)
+{
+	auto resourceContainer = &Graphics::getInstance().GetResourcesContainer();
 	aiMaterial* aiMaterial = scene->mMaterials[mesh->mMaterialIndex];
+	std::ostringstream oss;
+	oss << scene->mName.C_Str() << "/" << mesh->mName.C_Str() << "/" << aiMaterial->GetName().C_Str();
+	std::string matKey = oss.str();
+
+	if (auto mat = resourceContainer->GetMaterial(matKey)) 
+	{
+		return mat;
+	}
+
+	std::shared_ptr<Material> material;
 
 	if (aiMaterial->GetTextureCount(aiTextureType_DIFFUSE) > 0)
 	{
@@ -99,20 +111,17 @@ std::pair<MeshData, Material*> Model::ProcessMesh(const aiMesh* mesh, const aiSc
 		if (aiMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &path) == AI_SUCCESS)
 		{
 			const aiTexture* texture = scene->GetEmbeddedTexture(path.C_Str());
-			auto resourceContainer = &Graphics::getInstance().GetResourcesContainer();
 			if (texture)
 			{
 				logInfo("[Model] Found embedded texture: " + std::string(path.C_Str()));
 				auto shaderResource = resourceContainer->GetTexture(texture->mFilename.C_Str(), texture);
-				material = Graphics::getInstance().RegisterMaterial(
-					std::make_unique<SurfaceMaterial>(shaderResource));
+				material = std::make_shared<SurfaceMaterial>(shaderResource);
 			}
 			else
 			{
 				logInfo("[Model] Found diffuse texture: " + std::string(path.C_Str()));
 				auto shaderResource = resourceContainer->GetTexture(path.C_Str());
-				material = Graphics::getInstance().RegisterMaterial(
-					std::make_unique<SurfaceMaterial>(shaderResource));
+				material = std::make_shared<SurfaceMaterial>(shaderResource);
 			}
 		}
 	}
@@ -121,19 +130,18 @@ std::pair<MeshData, Material*> Model::ProcessMesh(const aiMesh* mesh, const aiSc
 		aiColor4D color;
 		if (aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_DIFFUSE, &color) == AI_SUCCESS)
 		{
-			material = Graphics::getInstance().RegisterMaterial(
-				std::make_unique<SolidMaterial>(XMFLOAT4(color.r, color.g, color.b, color.a)));
+			material = std::make_shared<SolidMaterial>(XMFLOAT4(color.r, color.g, color.b, color.a));
 		}
 		else
 		{
 			logError("[Model] No textures were found! Pink color returned.");
 			LogMaterialInfo(aiMaterial, mesh->mMaterialIndex);
-			material = Graphics::getInstance().RegisterMaterial(
-				std::make_unique<SolidMaterial>(XMFLOAT4(1, 0.8f, 0.85f, 1)));
+			material = std::make_shared<SolidMaterial>(XMFLOAT4(1, 0.8f, 0.85f, 1));
 		}
 	}
 
-	return std::make_pair(subMeshData, material);
+	resourceContainer->RegisterMaterial(matKey, material);
+	return material;
 }
 
 void logNodeHierarchy(aiNode* node)
@@ -148,7 +156,7 @@ void logNodeHierarchy(aiNode* node)
 	}
 }
 
-void LogMaterialInfo(const aiMaterial* material, int index)
+void LogMaterialInfo(const aiMaterial* material, unsigned int index)
 {
 	logInfo("*******************************LogMaterialInfo************************************");
 	std::ostringstream oss;

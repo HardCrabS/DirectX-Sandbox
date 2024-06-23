@@ -10,7 +10,7 @@ class RenderSystem : public System
 {
 	CameraComponent* cameraToRenderFrom;
 private:
-	void UpdateMaterial(Material* material, TransformComponent* transform);
+	void UpdateMaterial(const std::shared_ptr<Material>& material, TransformComponent* transform);
 public:
 	RenderSystem() : cameraToRenderFrom(nullptr) {}
 	void Initialize() override;

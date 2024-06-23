@@ -15,16 +15,14 @@ class SkyboxMaterial : public Material
 	ID3D11Buffer* cbSkyboxBuffer;
 	SkyboxBuffer skyboxBufferData;
 
-	std::string texturePath;
 	ID3D11ShaderResourceView* skyboxCubeTexture;
 	ID3D11SamplerState* samplerLinear;
 
 	ID3D11DepthStencilState* DSLessEqual;
 
 public:
-	SkyboxMaterial(std::string texturePath, TransformComponent* cameraTransform);
-	void UpdateResources(DirectX::XMMATRIX worldMatrix, DirectX::XMMATRIX viewMatrix,
-		DirectX::XMMATRIX projectionMatrix) override;
+	SkyboxMaterial(ID3D11ShaderResourceView* textureSkybox, TransformComponent* cameraTransform);
+	void UpdateResources(XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix) override;
 	void PostDrawCleanUp() override;
 
 protected:

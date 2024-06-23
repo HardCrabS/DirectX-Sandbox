@@ -13,8 +13,11 @@ void MeshData::CreatePrimitive(PrimitiveType primitiveType, bool invert)
 		break;
 	}
 	}
-	vertices = primitiveMesh->GetVertices();
-	indices = primitiveMesh->GetIndices();
+	auto primitiveVertices = primitiveMesh->GetVertices();
+	auto primitiveIndices = primitiveMesh->GetIndices();
+
+	SetVertices(primitiveVertices);
+	SetIndices(primitiveIndices);
 }
 
 std::vector<Vertex> CubePrimitive::GetVertices()

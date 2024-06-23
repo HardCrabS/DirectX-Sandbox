@@ -25,19 +25,19 @@ void GameWorld::InitScene()
 	ecsWorld->AddComponent(cameraEntity->GetID(), std::move(cameraTransformComponent));
 	ecsWorld->AddComponent(cameraEntity->GetID(), std::move(cameraComponent));
 
-	//Entity* rectEntity1 = ecsWorld->CreateEntity();
-	//auto meshComponent = std::make_unique<MeshComponent>(Model("../Assets/Models/Chicken/Chicken_01.obj"));
-	//auto transformComponent = std::make_unique<TransformComponent>();
-	//transformComponent->Translate(XMVectorSet(0, -10, 0, 1.0f));
-	//transformComponent->Scale(XMVectorSet(.1f, .1f, .1f, 1.0f));
-	//ecsWorld->AddComponent(rectEntity1->GetID(), std::move(meshComponent));
-	//ecsWorld->AddComponent(rectEntity1->GetID(), std::move(transformComponent));
+	Entity* rectEntity1 = ecsWorld->CreateEntity();
+	auto meshComponent = std::make_unique<MeshComponent>(Model("../Assets/Models/Chicken/Chicken_01.obj"));
+	auto transformComponent = std::make_unique<TransformComponent>();
+	transformComponent->Translate(XMVectorSet(0, -10, 0, 1.0f));
+	transformComponent->Scale(XMVectorSet(.1f, .1f, .1f, 1.0f));
+	ecsWorld->AddComponent(rectEntity1->GetID(), std::move(meshComponent));
+	ecsWorld->AddComponent(rectEntity1->GetID(), std::move(transformComponent));
 
-	Entity* rectEntity2 = ecsWorld->CreateEntity();
-	auto meshComponent2 = std::make_unique<MeshComponent>(Model("../Assets/Models/BoxOfCigars/model.obj"));
-	auto transformComponent2 = std::make_unique<TransformComponent>();
-	ecsWorld->AddComponent(rectEntity2->GetID(), std::move(meshComponent2));
-	ecsWorld->AddComponent(rectEntity2->GetID(), std::move(transformComponent2));
+	//Entity* rectEntity2 = ecsWorld->CreateEntity();
+	//auto meshComponent2 = std::make_unique<MeshComponent>(Model("../Assets/Models/BoxOfCigars/model.obj"));
+	//auto transformComponent2 = std::make_unique<TransformComponent>();
+	//ecsWorld->AddComponent(rectEntity2->GetID(), std::move(meshComponent2));
+	//ecsWorld->AddComponent(rectEntity2->GetID(), std::move(transformComponent2));
 
 	//Entity* rectEntity3 = ecsWorld->CreateEntity();
 	//Material* mat3 = graphics->RegisterMaterial(std::make_unique<SolidMaterial>(XMFLOAT4(1,0,0,1)));
@@ -47,13 +47,18 @@ void GameWorld::InitScene()
 	//ecsWorld->AddComponent(rectEntity3->GetID(), std::move(meshComponent3));
 	//ecsWorld->AddComponent(rectEntity3->GetID(), std::move(transformComponent3));
 
-	//Entity* skyboxEntity = ecsWorld->CreateEntity();
-	//Material* matSkybox = graphics->RegisterMaterial(
-	//	std::make_unique<SkyboxMaterial>("../Assets/Textures/YokotamaCitySkybox.dds", cameraTransformPtr));
-	//auto meshSkybox = std::make_unique<MeshComponent>(MeshData(PrimitiveType::Cube, true), matSkybox);
-	//auto transformSkybox = std::make_unique<TransformComponent>();
-	//ecsWorld->AddComponent(skyboxEntity->GetID(), std::move(meshSkybox));
-	//ecsWorld->AddComponent(skyboxEntity->GetID(), std::move(transformSkybox));
+	Entity* skyboxEntity = ecsWorld->CreateEntity();
+	std::string skyboxPath = "../Assets/Textures/YokotamaCitySkybox.dds";
+	auto shaderResource = graphics->GetResourcesContainer().GetTexture(skyboxPath, nullptr, TextureFormat::DDS);
+	auto matSkybox = std::make_shared<SkyboxMaterial>(shaderResource, cameraTransformPtr);
+	graphics->GetResourcesContainer().RegisterMaterial(skyboxPath, matSkybox);
+
+	std::vector<MeshData> invertedBox = { MeshData(PrimitiveType::Cube, true) };
+	std::vector<std::shared_ptr<Material>> skyMaterials = { matSkybox };
+	auto meshSkybox = std::make_unique<MeshComponent>(Model(invertedBox, skyMaterials));
+	auto transformSkybox = std::make_unique<TransformComponent>();
+	ecsWorld->AddComponent(skyboxEntity->GetID(), std::move(meshSkybox));
+	ecsWorld->AddComponent(skyboxEntity->GetID(), std::move(transformSkybox));
 }
 
 void GameWorld::Update()

@@ -40,6 +40,7 @@ protected:
 	virtual void CleanUp();
 public:
 	Material(LPCWSTR vsFilename, LPCSTR vsName, LPCWSTR psFilename, LPCSTR psName);
+	~Material() { logInfo("Material destroyed: " + Utils::ConvertLPCWSTRToString(vsFilename)); }
 	virtual void UpdateResources(DirectX::XMMATRIX worldMatrix, DirectX::XMMATRIX viewMatrix,
 		DirectX::XMMATRIX projectionMatrix);
 	virtual void PostDrawCleanUp() {}

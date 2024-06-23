@@ -30,7 +30,7 @@ void RenderSystem::UpdateEntity(Entity* entity)
     for (int i = 0; i < meshData.size(); i++)
     {
         MeshData* subMeshData = &meshData[i];
-        Material* material = meshComponent->GetModel().GetMaterial(subMeshData->GetMaterialIndex());
+        std::shared_ptr<Material> material = meshComponent->GetModel().GetMaterial(subMeshData->GetMaterialIndex());
         UpdateMaterial(material, transformComponent);
 
         devcon->IASetIndexBuffer(meshComponent->GetIndexBuffer(i), DXGI_FORMAT_R32_UINT, 0);
@@ -46,7 +46,7 @@ void RenderSystem::UpdateEntity(Entity* entity)
     }
 }
 
-void RenderSystem::UpdateMaterial(Material* material, TransformComponent* transform)
+void RenderSystem::UpdateMaterial(const std::shared_ptr<Material>& material, TransformComponent* transform)
 {
     auto devcon = Graphics::getInstance().GetDeviceContext();
 

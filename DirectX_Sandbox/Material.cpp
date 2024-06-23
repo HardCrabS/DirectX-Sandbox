@@ -29,13 +29,13 @@ void Material::CreateShaders()
 	//Compile Shaders from shader file
 	HRESULT hr = D3DCompileFromFile(vsFilename, 0, 0, vsName, "vs_4_0", 0, 0, &VS_Buffer, 0);
 	hr = D3DCompileFromFile(psFilename, 0, 0, psName, "ps_4_0", 0, 0, &PS_Buffer, 0);
-	assert(!FAILED(hr));
+	assert(SUCCEEDED(hr));
 
 	//Create the Shader Objects
 	hr = device->CreateVertexShader(VS_Buffer->GetBufferPointer(), VS_Buffer->GetBufferSize(), NULL, &VS);
-	assert(!FAILED(hr));
+	assert(SUCCEEDED(hr));
 	hr = device->CreatePixelShader(PS_Buffer->GetBufferPointer(), PS_Buffer->GetBufferSize(), NULL, &PS);
-	assert(!FAILED(hr));
+	assert(SUCCEEDED(hr));
 }
 
 void Material::CreateBuffers()
@@ -49,7 +49,7 @@ void Material::CreateBuffers()
 	cbbd.CPUAccessFlags = 0;
 	cbbd.MiscFlags = 0;
 	HRESULT hr = device->CreateBuffer(&cbbd, NULL, &cbBuffer);
-	assert(!FAILED(hr));
+	assert(SUCCEEDED(hr));
 }
 
 void Material::CleanUp()

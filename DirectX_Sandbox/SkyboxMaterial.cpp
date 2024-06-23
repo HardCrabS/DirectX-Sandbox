@@ -1,14 +1,13 @@
 #include "SkyboxMaterial.h"
 
-SkyboxMaterial::SkyboxMaterial(std::string texturePath, TransformComponent* cameraTransform)
+SkyboxMaterial::SkyboxMaterial(ID3D11ShaderResourceView* textureSkybox, TransformComponent* cameraTransform)
 	: Material(L"skybox.fx", "VS", L"skybox.fx", "PS"),
-	cameraTransform(cameraTransform), texturePath(texturePath)
+	cameraTransform(cameraTransform), skyboxCubeTexture(textureSkybox)
 {
 
 }
 
-void SkyboxMaterial::UpdateResources(DirectX::XMMATRIX worldMatrix, DirectX::XMMATRIX viewMatrix, 
-	DirectX::XMMATRIX projectionMatrix)
+void SkyboxMaterial::UpdateResources(XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix)
 {
 	viewMatrix.r[3] = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
 	skyboxBufferData.ViewProjectionMatrix = DirectX::XMMatrixTranspose(viewMatrix * projectionMatrix);
@@ -52,14 +51,6 @@ void SkyboxMaterial::CreateBuffers()
 	cbbd.CPUAccessFlags = 0;
 	cbbd.MiscFlags = 0;
 	HRESULT hr = device->CreateBuffer(&cbbd, NULL, &cbSkyboxBuffer);
-	assert(SUCCEEDED(hr));
-
-	// texture TODO: redo in ResourcesContainer
-	DirectX::TexMetadata metadata;
-	DirectX::ScratchImage image;
-	hr = DirectX::LoadFromDDSFile(Utils::StringToWString(texturePath).c_str(), DirectX::DDS_FLAGS_NONE, &metadata, image);
-	assert(SUCCEEDED(hr));
-	hr = DirectX::CreateShaderResourceView(device, image.GetImages(), image.GetImageCount(), metadata, &skyboxCubeTexture);
 	assert(SUCCEEDED(hr));
 
 	D3D11_SAMPLER_DESC sampDesc;

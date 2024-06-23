@@ -104,12 +104,3 @@ void Graphics::Present()
 {
 	SwapChain->Present(0, 0);
 }
-
-Material* Graphics::RegisterMaterial(std::unique_ptr<Material> mat)
-{
-	Material* matp = mat.get();
-	mat->SetDeviceAndDevcon(d3d11Device, d3d11DevCon);
-	mat->Initialize();
-	materials.push_back(std::move(mat));
-	return matp;
-}

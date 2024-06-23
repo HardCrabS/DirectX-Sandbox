@@ -9,23 +9,36 @@ void ResourcesContainer::Initialize(ID3D11Device* device, ID3D11DeviceContext* d
 	this->devcon = devcon;
 }
 
-ID3D11ShaderResourceView* ResourcesContainer::GetTexture(const std::string& path, const aiTexture* aiEmbeddedTexture)
+ID3D11ShaderResourceView* ResourcesContainer::GetTexture(const std::string& path, const aiTexture* aiEmbeddedTexture, 
+	TextureFormat textureFormat)
 {
 	if (m_loadedTextures.find(path) != m_loadedTextures.end())
 		return m_loadedTextures.at(path).Get();
 	if (aiEmbeddedTexture != nullptr)
-		return LoadTexture(aiEmbeddedTexture);
+		return LoadEmbeddedTexture(aiEmbeddedTexture);
 
-	return LoadTexture(path);
+	return LoadTexture(path, textureFormat);
 }
 
-ID3D11ShaderResourceView* ResourcesContainer::LoadTexture(const std::string& path)
+ID3D11ShaderResourceView* ResourcesContainer::LoadTexture(const std::string& path, TextureFormat textureFormat)
 {
 	ShaderResource textureResource;
 
 	DirectX::TexMetadata metadata;
 	DirectX::ScratchImage image;
-	HRESULT hr = LoadFromWICFile(Utils::StringToWString(path).c_str(), DirectX::WIC_FLAGS_NONE, &metadata, image);
+	HRESULT hr;
+	if (textureFormat == TextureFormat::WIC)
+	{
+		hr = LoadFromWICFile(Utils::StringToWString(path).c_str(), DirectX::WIC_FLAGS_NONE, &metadata, image);
+	}
+	else if (textureFormat == TextureFormat::DDS)
+	{
+		hr = LoadFromDDSFile(Utils::StringToWString(path).c_str(), DirectX::DDS_FLAGS_NONE, &metadata, image);
+	}
+	else
+	{
+		logError("[ResourcesContainer] Unknown TextureFormat!");
+	}
 	assert(SUCCEEDED(hr));
 	hr = DirectX::CreateShaderResourceView(device, image.GetImages(), image.GetImageCount(), 
 		metadata, textureResource.GetAddressOf());
@@ -37,11 +50,9 @@ ID3D11ShaderResourceView* ResourcesContainer::LoadTexture(const std::string& pat
 	return resourceView;
 }
 
-ID3D11ShaderResourceView* ResourcesContainer::LoadTexture(const aiTexture* texture)
+ID3D11ShaderResourceView* ResourcesContainer::LoadEmbeddedTexture(const aiTexture* texture)
 {
 	D3D11_TEXTURE2D_DESC desc = {};
-	desc.Width = texture->mWidth;
-	desc.Height = texture->mHeight > 0 ? texture->mHeight : 1;
 	desc.MipLevels = 1;
 	desc.ArraySize = 1;
 	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -51,31 +62,62 @@ ID3D11ShaderResourceView* ResourcesContainer::LoadTexture(const aiTexture* textu
 	desc.CPUAccessFlags = 0;
 	desc.MiscFlags = 0;
 
-	// TODO: handle uncompressed texture case. Check for texture->mHeight > 0
-	int width, height, channels;
-	unsigned char* imageData = stbi_load_from_memory(
-		reinterpret_cast<unsigned char*>(texture->pcData),
-		texture->mWidth,
-		&width, &height, &channels, STBI_rgb_alpha);
-
-	desc.Width = width;
-	desc.Height = height;
-
 	D3D11_SUBRESOURCE_DATA initData = {};
-	//initData.pSysMem = texture->pcData;
-	initData.pSysMem = imageData;
-	initData.SysMemPitch = width * 4;
-
 	ID3D11Texture2D* dxTexture = nullptr;
-	HRESULT hr = device->CreateTexture2D(&desc, &initData, &dxTexture);
-	assert(SUCCEEDED(hr));
+
+	if (texture->mHeight == 0)
+	{
+		// The texture is compressed
+		int width, height, channels;
+		unsigned char* imageData = stbi_load_from_memory(
+			reinterpret_cast<unsigned char*>(texture->pcData),
+			texture->mWidth,
+			&width, &height, &channels, STBI_rgb_alpha);
+
+		desc.Width = width;
+		desc.Height = height;
+
+		initData.pSysMem = imageData;
+		initData.SysMemPitch = width * 4;
+
+		HRESULT hr = device->CreateTexture2D(&desc, &initData, &dxTexture);
+		assert(SUCCEEDED(hr));
+
+		stbi_image_free(imageData);  // clear texture data from CPU
+	}
+	else
+	{
+		desc.Width = texture->mWidth;
+		desc.Height = texture->mHeight;
+
+		initData.pSysMem = texture->pcData;
+		initData.SysMemPitch = texture->mWidth * 4;
+
+		HRESULT hr = device->CreateTexture2D(&desc, &initData, &dxTexture);
+		assert(SUCCEEDED(hr));
+	}
 
 	ShaderResource textureResource;
 	device->CreateShaderResourceView(dxTexture, nullptr, textureResource.GetAddressOf());
 	ID3D11ShaderResourceView* resourceView = textureResource.Get();
 	m_loadedTextures[texture->mFilename.C_Str()] = std::move(textureResource);
 
-	stbi_image_free(imageData);  // clear texture data from CPU (for compressed)
-
 	return resourceView;
+}
+
+void ResourcesContainer::RegisterMaterial(const std::string& key, const std::shared_ptr<Material>& material)
+{
+	logInfo("[ResourcesContainer] Registered material: " + key);
+	material->SetDeviceAndDevcon(device, devcon);
+	material->Initialize();
+	m_materials[key] = std::weak_ptr(material);
+}
+
+std::shared_ptr<Material> ResourcesContainer::GetMaterial(const std::string& key)
+{
+	if (m_materials.find(key) != m_materials.end()) {
+		logInfo("[ResourcesContainer] Retrieved material: " + key);
+		return m_materials.at(key).lock();
+	}
+	return nullptr;
 }

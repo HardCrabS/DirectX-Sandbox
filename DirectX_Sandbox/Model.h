@@ -9,22 +9,22 @@
 #include "Logger.h"
 #include "MeshData.h"
 #include "Material.h"
-#include <tuple>
 
 using namespace DirectX;
-using namespace std;
 
 
 class Model
 {
 	std::vector<MeshData> meshData;
-	std::vector<Material*> materials;
+	std::vector<std::shared_ptr<Material>> materials;
 
 public:
 	Model(const std::string& filename) { LoadModel(filename); }
+	Model(const std::vector<MeshData>& meshData, const std::vector<std::shared_ptr<Material>>& materials)
+	: meshData(std::move(meshData)), materials(materials) {}
 
 	const std::vector<MeshData>& GetMeshData() const { return meshData; }
-	Material* GetMaterial(int index) const
+	std::shared_ptr<Material> GetMaterial(int index) const
 	{
 		if(index < 0 || index >= materials.size())
 		{
@@ -37,5 +37,7 @@ public:
 private:
 	void LoadModel(const std::string& filename);
 	void ProcessNode(aiNode* node, const aiScene* scene);
-	std::pair<MeshData, Material*> ProcessMesh(const aiMesh* mesh, const aiScene* scene);
+	//std::pair<MeshData, std::shared_ptr<Material>> ProcessMesh(const aiMesh* mesh, const aiScene* scene);
+	MeshData ProcessMesh(const aiMesh* mesh, const aiScene* scene);
+	std::shared_ptr<Material> ProcessMaterial(const aiMesh* mesh, const aiScene* scene);
 };
