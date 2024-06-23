@@ -14,7 +14,6 @@ public:
 		DirectX::XMMATRIX projectionMatrix) override;
 
 protected:
-	void CreateInputLayout() override;
 	void CreateBuffers() override;
 	void CleanUp() override;
 };

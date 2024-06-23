@@ -27,19 +27,6 @@ void SkyboxMaterial::PostDrawCleanUp()
 	devcon->OMSetDepthStencilState(NULL, 0);
 }
 
-void SkyboxMaterial::CreateInputLayout()
-{
-	layout = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	};
-	UINT numElements = layout.size();
-
-	HRESULT hr = device->CreateInputLayout(&layout[0], numElements, VS_Buffer->GetBufferPointer(),
-		VS_Buffer->GetBufferSize(), &vertLayout);
-	assert(SUCCEEDED(hr));
-}
-
 void SkyboxMaterial::CreateBuffers()
 {
 	// cb

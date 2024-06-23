@@ -13,7 +13,6 @@ class SolidMaterial : public Material
 	SolidBuffer solidBuffer;
 
 protected:
-	void CreateInputLayout() override;
 	void CreateBuffers() override;
 	void CleanUp() override;
 

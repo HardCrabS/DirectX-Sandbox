@@ -26,7 +26,6 @@ public:
 	void PostDrawCleanUp() override;
 
 protected:
-	void CreateInputLayout() override;
 	void CreateBuffers() override;
 	void CleanUp() override;
 };

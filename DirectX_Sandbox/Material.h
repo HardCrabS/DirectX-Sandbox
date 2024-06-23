@@ -33,11 +33,6 @@ protected:
 	ID3D11Device* device;
 	ID3D11DeviceContext* devcon;
 
-protected:
-	virtual void CreateShaders();
-	virtual void CreateInputLayout() = 0;
-	virtual void CreateBuffers();
-	virtual void CleanUp();
 public:
 	Material(LPCWSTR vsFilename, LPCSTR vsName, LPCWSTR psFilename, LPCSTR psName);
 	~Material() { logInfo("Material destroyed: " + Utils::ConvertLPCWSTRToString(vsFilename)); }
@@ -53,4 +48,11 @@ public:
 	ID3D11PixelShader* GetPS() const { return PS; }
 	ID3D11InputLayout* GetVertLayout() const { return vertLayout; }
 	D3D_PRIMITIVE_TOPOLOGY GetTopology() const { return topology; }
+
+protected:
+	virtual void CreateShaders();
+	virtual void CreateBuffers();
+	virtual void CleanUp();
+private:
+	void CreateInputLayout();
 };

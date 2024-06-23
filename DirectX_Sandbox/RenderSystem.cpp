@@ -35,6 +35,7 @@ void RenderSystem::UpdateEntity(Entity* entity)
 
         devcon->IASetIndexBuffer(meshComponent->GetIndexBuffer(i), DXGI_FORMAT_R32_UINT, 0);
 
+        // TODO: store vertices in a single buffer and make proper indexation
         UINT stride = sizeof(Vertex);
         UINT offset = 0;
         ID3D11Buffer* vertexBuffer = meshComponent->GetVertexBuffer(i);
