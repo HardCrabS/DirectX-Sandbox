@@ -147,6 +147,7 @@
     <ClInclude Include="CameraSystem.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Constants.h" />
+    <ClInclude Include="DirectionalLightComponent.h" />
     <ClInclude Include="DirectX_Sandbox.h" />
     <ClInclude Include="ECSWorld.h" />
     <ClInclude Include="Entity.h" />
@@ -203,6 +204,7 @@
     <Image Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="light.fx" />
     <FxCompile Include="skybox.fx" />
     <FxCompile Include="surface.fx" />
     <FxCompile Include="solid.fx" />

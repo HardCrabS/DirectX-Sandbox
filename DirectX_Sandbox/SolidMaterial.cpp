@@ -6,7 +6,7 @@ void SolidMaterial::UpdateResources(DirectX::XMMATRIX worldMatrix, DirectX::XMMA
 	Material::UpdateResources(worldMatrix, viewMatrix, projectionMatrix);
 
 	devcon->UpdateSubresource(cbBuffer, 0, nullptr, &solidBuffer, 0, 0);
-	devcon->PSSetConstantBuffers(0, 1, &cbBuffer);
+	devcon->PSSetConstantBuffers(1, 1, &cbBuffer);
 }
 
 void SolidMaterial::CreateBuffers()

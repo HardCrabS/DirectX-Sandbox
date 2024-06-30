@@ -7,9 +7,30 @@
 #include "Logger.h"
 #include "Utils.h"
 
+inline const int MAX_NUM_OF_DIRECTIONAL_LIGHTS = 3;
+
 struct VertexConstantBuffer
 {
 	DirectX::XMMATRIX WVP;
+};
+
+struct DirectionalLight
+{
+	DirectX::XMVECTOR direction;
+	DirectX::XMFLOAT4 color;
+	float intensity;
+};
+
+struct LightConstantBuffer
+{
+	DirectionalLight dirLights[MAX_NUM_OF_DIRECTIONAL_LIGHTS];
+
+	LightConstantBuffer()
+	{
+		for (auto& dirLight : dirLights) {
+			dirLight.direction = DirectX::XMVectorZero();
+		}
+	}
 };
 
 class Material
@@ -24,8 +45,10 @@ protected:
 	D3D_PRIMITIVE_TOPOLOGY topology;
 
 	// constant buffers
-	ID3D11Buffer* cbBuffer;
-	VertexConstantBuffer constantBuffer;
+	ID3D11Buffer* vertexCbBuffer;
+	VertexConstantBuffer vertexConstantBuffer;
+	ID3D11Buffer* lightCbBuffer;
+	LightConstantBuffer lightConstantBuffer;
 
 	LPCWSTR vsFilename, psFilename;
 	LPCSTR vsName, psName;
@@ -38,6 +61,7 @@ public:
 	~Material() { logInfo("Material destroyed: " + Utils::ConvertLPCWSTRToString(vsFilename)); }
 	virtual void UpdateResources(DirectX::XMMATRIX worldMatrix, DirectX::XMMATRIX viewMatrix,
 		DirectX::XMMATRIX projectionMatrix);
+	virtual void UpdateLights(const std::vector<DirectionalLight>& dirLights);
 	virtual void PostDrawCleanUp() {}
 	virtual void Initialize();
 	void SetDeviceAndDevcon(ID3D11Device* device, ID3D11DeviceContext* devcon) { 

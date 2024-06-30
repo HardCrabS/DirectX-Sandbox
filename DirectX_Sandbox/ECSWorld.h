@@ -48,6 +48,8 @@ public:
 	T* GetComponent(int entityID) const;
 	template<class T>
 	Entity* FindEntityWithComponent() const;
+	template<class T>
+	std::vector<T*> FindAllComponentsOfType() const;
 };
 
 template<class T>
@@ -68,4 +70,23 @@ Entity* ECSWorld::FindEntityWithComponent() const
 		}
 	}
 	return nullptr;
+}
+
+template<class T>
+std::vector<T*> ECSWorld::FindAllComponentsOfType() const
+{
+	std::vector<T*> componentsOfType;
+	for (auto& it : m_entityComponents)
+	{
+		auto& comps = it.second;
+		for (int i = 0; i < comps.size(); i++)
+		{
+			auto* comp = comps[i].get();
+			if (comp != nullptr && comp->GetTypeID() == T::TypeID())
+			{
+				componentsOfType.push_back(static_cast<T*>(comp));
+			}
+		}
+	}
+	return componentsOfType;
 }

@@ -32,7 +32,8 @@ void RenderSystem::UpdateEntity(Entity* entity)
         MeshData* subMeshData = &meshData[i];
         std::shared_ptr<Material> material = meshComponent->GetModel().GetMaterial(subMeshData->GetMaterialIndex());
         UpdateMaterial(material, transformComponent);
-
+        UpdateMaterialLights(material);
+        
         devcon->IASetIndexBuffer(meshComponent->GetIndexBuffer(i), DXGI_FORMAT_R32_UINT, 0);
 
         // TODO: store vertices in a single buffer and make proper indexation
@@ -47,7 +48,7 @@ void RenderSystem::UpdateEntity(Entity* entity)
     }
 }
 
-void RenderSystem::UpdateMaterial(const std::shared_ptr<Material>& material, TransformComponent* transform)
+void RenderSystem::UpdateMaterial(const std::shared_ptr<Material>& material, TransformComponent* transform) const
 {
     auto devcon = Graphics::getInstance().GetDeviceContext();
 
@@ -59,4 +60,19 @@ void RenderSystem::UpdateMaterial(const std::shared_ptr<Material>& material, Tra
 
     material->UpdateResources(transform->GetWorldMatrix(), cameraToRenderFrom->viewMatrix,
         cameraToRenderFrom->projectionMatrix);
+}
+
+void RenderSystem::UpdateMaterialLights(const std::shared_ptr<Material>& material) const
+{
+    auto ecsWorld = &ECSWorld::getInstance();
+    auto directLights = ecsWorld->FindAllComponentsOfType<DirectionalLightComponent>();
+
+    std::vector<DirectionalLight> directLightsBufferStructs;
+    for (auto* dirLight : directLights)
+    {
+        DirectionalLight directional_light = dirLight->ConvertToConstantBufferStruct();
+        directLightsBufferStructs.push_back(directional_light);
+    }
+
+    material->UpdateLights(directLightsBufferStructs);
 }

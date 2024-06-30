@@ -123,6 +123,9 @@
     <ClInclude Include="ResourcesContainer.h">
       <Filter>Header Files\Singletons</Filter>
     </ClInclude>
+    <ClInclude Include="DirectionalLightComponent.h">
+      <Filter>Header Files\ECS_Gameplay</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -206,5 +209,6 @@
     <FxCompile Include="surface.fx" />
     <FxCompile Include="solid.fx" />
     <FxCompile Include="skybox.fx" />
+    <FxCompile Include="light.fx" />
   </ItemGroup>
 </Project>

@@ -1,4 +1,5 @@
 #include "Material.h"
+#include <sstream>
 
 Material::Material(LPCWSTR vsFilename, LPCSTR vsName, LPCWSTR psFilename, LPCSTR psName)
 	: vsFilename(vsFilename), vsName(vsName), psFilename(psFilename), psName(psName),
@@ -18,37 +19,68 @@ void Material::UpdateResources(DirectX::XMMATRIX worldMatrix, DirectX::XMMATRIX 
 	DirectX::XMMATRIX projectionMatrix)
 {
 	DirectX::XMMATRIX WVP = worldMatrix * viewMatrix * projectionMatrix;
-	constantBuffer.WVP = DirectX::XMMatrixTranspose(WVP);
-	devcon->UpdateSubresource(cbBuffer, 0, NULL, &constantBuffer, 0, 0);
+	vertexConstantBuffer.WVP = DirectX::XMMatrixTranspose(WVP);
+	devcon->UpdateSubresource(vertexCbBuffer, 0, nullptr, &vertexConstantBuffer, 0, 0);
 	// TODO: probably should move to a higher level
-	devcon->VSSetConstantBuffers(0, 1, &cbBuffer);
+	devcon->VSSetConstantBuffers(0, 1, &vertexCbBuffer);
+}
+
+void Material::UpdateLights(const std::vector<DirectionalLight>& dirLights)
+{
+	if (dirLights.size() > MAX_NUM_OF_DIRECTIONAL_LIGHTS)
+	{
+		std::ostringstream oss;
+		oss << "The max number of directional lights supported is " << MAX_NUM_OF_DIRECTIONAL_LIGHTS << ". Found: " << dirLights.size();
+		logError(oss.str());
+	}
+
+	for (int i = 0; i < dirLights.size(); i++)
+	{
+		lightConstantBuffer.dirLights[i] = dirLights[i];
+	}
+
+	devcon->UpdateSubresource(lightCbBuffer, 0, nullptr, &lightConstantBuffer, 0, 0);
+	devcon->PSSetConstantBuffers(0, 1, &lightCbBuffer);
 }
 
 void Material::CreateShaders()
 {
 	//Compile Shaders from shader file
-	HRESULT hr = D3DCompileFromFile(vsFilename, 0, 0, vsName, "vs_4_0", 0, 0, &VS_Buffer, 0);
-	hr = D3DCompileFromFile(psFilename, 0, 0, psName, "ps_4_0", 0, 0, &PS_Buffer, 0);
+	HRESULT hr = D3DCompileFromFile(vsFilename, 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, vsName, "vs_4_0", 0, 0, &VS_Buffer, 0);
+	ID3DBlob* errorBlob = nullptr;
+	hr &= D3DCompileFromFile(psFilename, 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, psName, "ps_4_0", 0, 0, &PS_Buffer, &errorBlob);
+	if (FAILED(hr)) {
+		logError((char*)errorBlob->GetBufferPointer());
+	}
+	if (errorBlob) errorBlob->Release();
 	assert(SUCCEEDED(hr));
 
 	//Create the Shader Objects
 	hr = device->CreateVertexShader(VS_Buffer->GetBufferPointer(), VS_Buffer->GetBufferSize(), NULL, &VS);
-	assert(SUCCEEDED(hr));
-	hr = device->CreatePixelShader(PS_Buffer->GetBufferPointer(), PS_Buffer->GetBufferSize(), NULL, &PS);
+	hr &= device->CreatePixelShader(PS_Buffer->GetBufferPointer(), PS_Buffer->GetBufferSize(), NULL, &PS);
 	assert(SUCCEEDED(hr));
 }
 
 void Material::CreateBuffers()
 {
-	// constant buffer
-	D3D11_BUFFER_DESC cbbd;
-	ZeroMemory(&cbbd, sizeof(D3D11_BUFFER_DESC));
-	cbbd.Usage = D3D11_USAGE_DEFAULT;
-	cbbd.ByteWidth = sizeof(VertexConstantBuffer);
-	cbbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	cbbd.CPUAccessFlags = 0;
-	cbbd.MiscFlags = 0;
-	HRESULT hr = device->CreateBuffer(&cbbd, NULL, &cbBuffer);
+	D3D11_BUFFER_DESC vertexCbDesc;
+	ZeroMemory(&vertexCbDesc, sizeof(D3D11_BUFFER_DESC));
+	vertexCbDesc.Usage = D3D11_USAGE_DEFAULT;
+	vertexCbDesc.ByteWidth = sizeof(VertexConstantBuffer);
+	vertexCbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	vertexCbDesc.CPUAccessFlags = 0;
+	vertexCbDesc.MiscFlags = 0;
+	HRESULT hr = device->CreateBuffer(&vertexCbDesc, NULL, &vertexCbBuffer);
+	assert(SUCCEEDED(hr));
+
+	D3D11_BUFFER_DESC lightsBuffer;
+	ZeroMemory(&lightsBuffer, sizeof(D3D11_BUFFER_DESC));
+	lightsBuffer.Usage = D3D11_USAGE_DEFAULT;
+	lightsBuffer.ByteWidth = sizeof(LightConstantBuffer);
+	lightsBuffer.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	lightsBuffer.CPUAccessFlags = 0;
+	lightsBuffer.MiscFlags = 0;
+	hr = device->CreateBuffer(&lightsBuffer, NULL, &lightCbBuffer);
 	assert(SUCCEEDED(hr));
 }
 
@@ -74,5 +106,6 @@ void Material::CleanUp()
 	VS_Buffer->Release();
 	PS_Buffer->Release();
 	vertLayout->Release();
-	cbBuffer->Release();
+	vertexCbBuffer->Release();
+	lightCbBuffer->Release();
 }

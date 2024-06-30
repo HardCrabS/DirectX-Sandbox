@@ -23,6 +23,7 @@ class SkyboxMaterial : public Material
 public:
 	SkyboxMaterial(ID3D11ShaderResourceView* textureSkybox, TransformComponent* cameraTransform);
 	void UpdateResources(XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix) override;
+	void UpdateLights(const std::vector<DirectionalLight>& dirLights) override {};
 	void PostDrawCleanUp() override;
 
 protected:
