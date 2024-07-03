@@ -4,6 +4,8 @@
 #include "SolidMaterial.h"
 #include "SurfaceMaterial.h"
 
+//#define DETAILED_MATERIAL_LOG
+
 
 void logNodeHierarchy(aiNode* node);
 void LogMaterialInfo(const aiMaterial* material, unsigned int index);
@@ -102,6 +104,10 @@ std::shared_ptr<Material> Model::ProcessMaterial(const aiMesh* mesh, const aiSce
 		return mat;
 	}
 
+#ifdef DETAILED_MATERIAL_LOG
+	LogMaterialInfo(aiMaterial, mesh->mMaterialIndex);
+#endif
+
 	std::shared_ptr<Material> material;
 
 	if (aiMaterial->GetTextureCount(aiTextureType_DIFFUSE) > 0)
@@ -110,8 +116,7 @@ std::shared_ptr<Material> Model::ProcessMaterial(const aiMesh* mesh, const aiSce
 
 		if (aiMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &path) == AI_SUCCESS)
 		{
-			const aiTexture* texture = scene->GetEmbeddedTexture(path.C_Str());
-			if (texture)
+			if (const aiTexture* texture = scene->GetEmbeddedTexture(path.C_Str()))
 			{
 				logInfo("[Model] Found embedded texture: " + std::string(path.C_Str()));
 				auto shaderResource = resourceContainer->GetTexture(texture->mFilename.C_Str(), texture);

@@ -28,29 +28,30 @@ void GameWorld::InitScene()
 
 	Entity* directionalLight = ecsWorld->CreateEntity();
 	auto directLightComponent = std::make_unique<DirectionalLightComponent>(
-		XMVectorSet(1, -1, 1, 0), XMFLOAT4(1, 0, 0, 1), 2.f);
+		XMVectorSet(1, -1, 1, 0), XMFLOAT3(1, 1, 1), 1.f);
 	ecsWorld->AddComponent(directionalLight->GetID(), std::move(directLightComponent));
 
-	Entity* directionalLight2 = ecsWorld->CreateEntity();
-	auto directLightComponent2 = std::make_unique<DirectionalLightComponent>(
-		XMVectorSet(0, 0, 1, 0), XMFLOAT4(1, 1, 1, 1), 1.f);
-	ecsWorld->AddComponent(directionalLight2->GetID(), std::move(directLightComponent2));
+	//Entity* directionalLight2 = ecsWorld->CreateEntity();
+	//auto directLightComponent2 = std::make_unique<DirectionalLightComponent>(
+	//	XMVectorSet(0, 0, 1, 0), XMFLOAT3(1, 1, 1), 1.f);
+	//ecsWorld->AddComponent(directionalLight2->GetID(), std::move(directLightComponent2));
 
-	//Entity* rectEntity1 = ecsWorld->CreateEntity();
-	//auto meshComponent = std::make_unique<MeshComponent>(Model("../Assets/Models/Chicken/Chicken_01.obj"));
-	//auto transformComponent = std::make_unique<TransformComponent>();
-	//transformComponent->Translate(XMVectorSet(0, -10, 0, 1.0f));
-	//transformComponent->Scale(XMVectorSet(.1f, .1f, .1f, 1.0f));
-	//ecsWorld->AddComponent(rectEntity1->GetID(), std::move(meshComponent));
-	//ecsWorld->AddComponent(rectEntity1->GetID(), std::move(transformComponent));
+	Entity* rectEntity1 = ecsWorld->CreateEntity();
+	auto meshComponent = std::make_unique<MeshComponent>(Model("../Assets/Models/Chicken/Chicken_01.obj"));
+	auto transformComponent = std::make_unique<TransformComponent>();
+	transformComponent->Translate(XMVectorSet(0, -10, 0, 1.0f));
+	transformComponent->Scale(XMVectorSet(.1f, .1f, .1f, 1.0f));
+	ecsWorld->AddComponent(rectEntity1->GetID(), std::move(meshComponent));
+	ecsWorld->AddComponent(rectEntity1->GetID(), std::move(transformComponent));
 
-	Entity* rectEntity2 = ecsWorld->CreateEntity();
-	auto meshComponent2 = std::make_unique<MeshComponent>(Model("../Assets/Models/LittleBookcase/model.obj"));
-	auto transformComponent2 = std::make_unique<TransformComponent>();
-	transformComponent2->Translate(XMVectorSet(0, 0, 0, 1.0f));
-	transformComponent2->Scale(XMVectorSet(3, 3, 3, 1.0f));
-	ecsWorld->AddComponent(rectEntity2->GetID(), std::move(meshComponent2));
-	ecsWorld->AddComponent(rectEntity2->GetID(), std::move(transformComponent2));
+	//Entity* rectEntity2 = ecsWorld->CreateEntity();
+	//auto meshComponent2 = std::make_unique<MeshComponent>(Model("../Assets/Models/LittleBookcase/model.obj"));
+	//auto transformComponent2 = std::make_unique<TransformComponent>();
+	//transformComponent2->Translate(XMVectorSet(0, 0, 0, 1.0f));
+	//transformComponent2->Rotate(0, 0, 0);
+	//transformComponent2->Scale(XMVectorSet(3, 3, 3, 1.0f));
+	//ecsWorld->AddComponent(rectEntity2->GetID(), std::move(meshComponent2));
+	//ecsWorld->AddComponent(rectEntity2->GetID(), std::move(transformComponent2));
 
 	//Entity* rectEntity3 = ecsWorld->CreateEntity();
 	//Material* mat3 = graphics->RegisterMaterial(std::make_unique<SolidMaterial>(XMFLOAT4(1,0,0,1)));

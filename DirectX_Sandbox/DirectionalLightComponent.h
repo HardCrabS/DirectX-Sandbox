@@ -6,11 +6,11 @@
 class DirectionalLightComponent : public Component<DirectionalLightComponent>
 {
 	DirectX::XMVECTOR direction;
-	DirectX::XMFLOAT4 color;
+	DirectX::XMFLOAT3 color;
 	float intensity = 1;
 
 public:
-	DirectionalLightComponent(DirectX::XMVECTOR dir, DirectX::XMFLOAT4 col, float intensity)
+	DirectionalLightComponent(DirectX::XMVECTOR dir, DirectX::XMFLOAT3 col, float intensity)
 	: direction(dir), color(col), intensity(intensity) {}
 
 	const DirectX::XMVECTOR& GetDirection() const { return direction; }

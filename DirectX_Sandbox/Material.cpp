@@ -18,8 +18,10 @@ void Material::Initialize()
 void Material::UpdateResources(DirectX::XMMATRIX worldMatrix, DirectX::XMMATRIX viewMatrix,
 	DirectX::XMMATRIX projectionMatrix)
 {
-	DirectX::XMMATRIX WVP = worldMatrix * viewMatrix * projectionMatrix;
-	vertexConstantBuffer.WVP = DirectX::XMMatrixTranspose(WVP);
+	vertexConstantBuffer.worldMatrix = DirectX::XMMatrixTranspose(worldMatrix);
+	vertexConstantBuffer.viewMatrix = DirectX::XMMatrixTranspose(viewMatrix);
+	vertexConstantBuffer.projectionMatrix = DirectX::XMMatrixTranspose(projectionMatrix);
+
 	devcon->UpdateSubresource(vertexCbBuffer, 0, nullptr, &vertexConstantBuffer, 0, 0);
 	// TODO: probably should move to a higher level
 	devcon->VSSetConstantBuffers(0, 1, &vertexCbBuffer);
@@ -37,6 +39,8 @@ void Material::UpdateLights(const std::vector<DirectionalLight>& dirLights)
 	for (int i = 0; i < dirLights.size(); i++)
 	{
 		lightConstantBuffer.dirLights[i] = dirLights[i];
+		lightConstantBuffer.dirLights[i].direction = DirectX::XMVector4Transform(
+			lightConstantBuffer.dirLights[i].direction, DirectX::XMMatrixTranspose(vertexConstantBuffer.viewMatrix));
 	}
 
 	devcon->UpdateSubresource(lightCbBuffer, 0, nullptr, &lightConstantBuffer, 0, 0);

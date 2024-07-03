@@ -11,13 +11,15 @@ inline const int MAX_NUM_OF_DIRECTIONAL_LIGHTS = 3;
 
 struct VertexConstantBuffer
 {
-	DirectX::XMMATRIX WVP;
+	DirectX::XMMATRIX worldMatrix;
+	DirectX::XMMATRIX viewMatrix;
+	DirectX::XMMATRIX projectionMatrix;
 };
 
 struct DirectionalLight
 {
 	DirectX::XMVECTOR direction;
-	DirectX::XMFLOAT4 color;
+	DirectX::XMFLOAT3 color;
 	float intensity;
 };
 
