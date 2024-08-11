@@ -45,11 +45,11 @@ void GameWorld::InitScene()
 	ecsWorld->AddComponent(rectEntity1->GetID(), std::move(transformComponent));
 
 	//Entity* rectEntity2 = ecsWorld->CreateEntity();
-	//auto meshComponent2 = std::make_unique<MeshComponent>(Model("../Assets/Models/LittleBookcase/model.obj"));
+	//auto meshComponent2 = std::make_unique<MeshComponent>(Model("../Assets/Models/crab/crab.fbx"));
 	//auto transformComponent2 = std::make_unique<TransformComponent>();
 	//transformComponent2->Translate(XMVectorSet(0, 0, 0, 1.0f));
 	//transformComponent2->Rotate(0, 0, 0);
-	//transformComponent2->Scale(XMVectorSet(3, 3, 3, 1.0f));
+	//transformComponent2->Scale(XMVectorSet(1, 1, 1, 1.0f));
 	//ecsWorld->AddComponent(rectEntity2->GetID(), std::move(meshComponent2));
 	//ecsWorld->AddComponent(rectEntity2->GetID(), std::move(transformComponent2));
 

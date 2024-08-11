@@ -38,8 +38,13 @@ ID3D11ShaderResourceView* ResourcesContainer::LoadTexture(const std::string& pat
 	else
 	{
 		logError("[ResourcesContainer] Unknown TextureFormat!");
+		assert(false);
 	}
-	assert(SUCCEEDED(hr));
+	if (FAILED(hr))
+	{
+		logInfo("[ResourcesContainer] Failed to load texture: " + path);
+		assert(false);
+	}
 	hr = DirectX::CreateShaderResourceView(device, image.GetImages(), image.GetImageCount(), 
 		metadata, textureResource.GetAddressOf());
 	assert(SUCCEEDED(hr));

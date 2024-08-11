@@ -11,10 +11,15 @@
 #include <memory>
 #include <iostream>
 #include <fstream>
+#include <chrono>
 #include "Graphics.h"
 #include "GameWorld.h"
 #include "InputManager.h"
 #include "Logger.h"
+
+#include "imgui.h"
+#include "backends/imgui_impl_dx11.h"
+#include "backends/imgui_impl_win32.h"
 
 using namespace DirectX;
 
@@ -28,6 +33,10 @@ const int Height = 600;
 Graphics* graphics = &Graphics::getInstance();
 GameWorld gameWorld;
 InputManager* inputManager = &InputManager::getInstance();
+
+std::chrono::high_resolution_clock::time_point lastFrameTime;
+float deltaTime = 0.0f;
+float fps = 0.0f;
 
 bool InitializeWindow(HINSTANCE hInstance, int ShowWnd, int width, int height, bool windowed);
 int messageloop();
@@ -54,17 +63,62 @@ int WINAPI WinMain(HINSTANCE hInstance,
     graphics->Init(Width, Height, hInstance, hwnd);
     gameWorld.InitScene();
 
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+
+    // Setup Platform/Renderer backends
+    ImGui_ImplWin32_Init(hwnd);
+    ImGui_ImplDX11_Init(graphics->GetDevice(), graphics->GetDeviceContext());
+
     messageloop();
 
     graphics->CleanUp();
 
+    ImGui_ImplDX11_Shutdown();
+    ImGui_ImplWin32_Shutdown();
+    ImGui::DestroyContext();
+
     return 0;
+}
+
+void CalculateFPS()
+{
+    auto currentTime = std::chrono::high_resolution_clock::now();
+    deltaTime = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - lastFrameTime).count();
+    lastFrameTime = currentTime;
+
+    if (deltaTime > 0.0f)
+    {
+        fps = 1.0f / deltaTime;
+    }
 }
 
 void Update()
 {
     graphics->ClearScreen();
+
+    CalculateFPS();
+
+    // Start the Dear ImGui frame
+    ImGui_ImplDX11_NewFrame();
+    ImGui_ImplWin32_NewFrame();
+    ImGui::NewFrame();
+
+    ImGui::Begin("Performance");
+    ImGui::Text("FPS: %.2f", fps);
+    ImGui::Text("Frame Time: %.4f ms", deltaTime * 1000.0f);
+    ImGui::End();
+
     gameWorld.Update();
+
+    // Rendering
+    // (Your code clears your framebuffer, renders your other stuff etc.)
+    ImGui::Render();
+    ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
     graphics->Present();
     inputManager->ClearDelta();
 }
@@ -168,6 +222,10 @@ LRESULT CALLBACK WndProc(HWND hwnd,
     WPARAM wParam,
     LPARAM lParam)
 {
+    extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+    if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wParam, lParam))
+        return true;
+
     switch (msg)
     {
     case WM_KEYDOWN:

@@ -4,7 +4,7 @@
 #include "SolidMaterial.h"
 #include "SurfaceMaterial.h"
 
-//#define DETAILED_MATERIAL_LOG
+#define DETAILED_MATERIAL_LOG
 
 
 void logNodeHierarchy(aiNode* node);
