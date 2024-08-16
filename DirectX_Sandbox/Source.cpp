@@ -16,6 +16,7 @@
 #include "GameWorld.h"
 #include "InputManager.h"
 #include "Logger.h"
+#include "Picker.h"
 
 #include "imgui.h"
 #include "backends/imgui_impl_dx11.h"
@@ -33,6 +34,7 @@ const int Height = 600;
 Graphics* graphics = &Graphics::getInstance();
 GameWorld gameWorld;
 InputManager* inputManager = &InputManager::getInstance();
+Picker picker(Width, Height);
 
 std::chrono::high_resolution_clock::time_point lastFrameTime;
 float deltaTime = 0.0f;
@@ -62,6 +64,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
     graphics->Init(Width, Height, hInstance, hwnd);
     gameWorld.InitScene();
+
+    picker.Initialize();
 
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();

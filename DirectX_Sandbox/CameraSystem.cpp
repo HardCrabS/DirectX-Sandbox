@@ -29,7 +29,7 @@ void CameraSystem::UpdateEntity(Entity* entity)
 		XMVECTOR offset = transformComponent->GetForward() * cameraComponent->currentDistance;
 		transformComponent->SetPosition(DirectX::XMVectorAdd(cameraComponent->target, offset));
 	}
-	if (inputManager->IsLeftDown()) {
+	if (inputManager->IsRightDown()) {
 		float dx = -inputManager->GetRawX() * cameraComponent->ORBIT_SENSITIVITY;
 		float dy = -inputManager->GetRawY() * cameraComponent->ORBIT_SENSITIVITY;
 		if (transformComponent->GetPitch() + dy > XM_PIDIV2 || transformComponent->GetPitch() + dy < -XM_PIDIV2)

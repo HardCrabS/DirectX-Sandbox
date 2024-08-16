@@ -1,5 +1,6 @@
 #pragma once
 #include "Logger.h"
+#include "Event.h"
 
 class InputManager
 {
@@ -10,6 +11,10 @@ class InputManager
 	int rawX = 0;
 	int rawY = 0;
 	int mouseWheelLastDirection = 0;
+
+public:
+	Event<int, int> OnLeftMouseButtonClick;
+
 private:
 	InputManager() {}
 public:
@@ -23,7 +28,10 @@ public:
 
 	void ClearDelta() { rawX = 0; rawY = 0; mouseWheelLastDirection = 0; }
 
-	void OnLeftPressed(int x, int y) { leftIsDown = true; }
+	void OnLeftPressed(int x, int y) { 
+		leftIsDown = true; 
+		OnLeftMouseButtonClick.Notify(x, y);
+	}
 	void OnRightPressed(int x, int y) { rightIsDown = true; }
 	void OnLeftReleased(int x, int y) { leftIsDown = false; }
 	void OnRightReleased(int x, int y) { rightIsDown = false; }
