@@ -29,10 +29,13 @@ void Picker::Pick(int x, int y)
 	XMVECTOR nearPlanePointInScreenSpace = DirectX::XMVectorSet(ndcX, ndcY, 0.f, 1.f);
 	XMVECTOR nearPlanePointInViewSpace = DirectX::XMVector4Transform(nearPlanePointInScreenSpace, projectionInverse);
 	XMVECTOR nearPlanePointInWorldSpace = DirectX::XMVector4Transform(nearPlanePointInViewSpace, viewInverse);
+	// Make sure w is 1, therefore ensuring perspective
+	nearPlanePointInWorldSpace = XMVectorScale(nearPlanePointInWorldSpace, 1.0f / XMVectorGetW(nearPlanePointInWorldSpace));
 
 	XMVECTOR farPlanePointInScreenSpace = DirectX::XMVectorSet(ndcX, ndcY, 1.f, 1.f);
 	XMVECTOR farPlanePointInViewSpace = DirectX::XMVector4Transform(farPlanePointInScreenSpace, projectionInverse);
 	XMVECTOR farPlanePointInWorldSpace = DirectX::XMVector4Transform(farPlanePointInViewSpace, viewInverse);
+	farPlanePointInWorldSpace = XMVectorScale(farPlanePointInWorldSpace, 1.0f / XMVectorGetW(farPlanePointInWorldSpace));
 
 	XMVECTOR direction = XMVector3Normalize(XMVectorSubtract(farPlanePointInWorldSpace, nearPlanePointInWorldSpace));
 
@@ -41,11 +44,21 @@ void Picker::Pick(int x, int y)
 
 	logInfo("direction: " + prettyXMVector(direction));
 
-	auto meshEntity = ECSWorld::getInstance().FindEntityWithComponent<MeshComponent>();
-	auto transform = ECSWorld::getInstance().GetComponent<TransformComponent>(meshEntity->GetID());
+	HitData hitData;
+	XMFLOAT3 origin;
+	XMStoreFloat3(&origin, nearPlanePointInWorldSpace);
+	if (Raycast::Shoot(origin, direction, hitData))
+	{
+		logInfo("Successfuly hit entity: " + std::to_string(hitData.entityID));
+	}
 
-	auto cameraEntity = ECSWorld::getInstance().FindEntityWithComponent<CameraComponent>();
-	auto cameraTransform = ECSWorld::getInstance().GetComponent<TransformComponent>(cameraEntity->GetID());
+	auto hitEntity = ECSWorld::getInstance().GetEntity(hitData.entityID);
+	logInfo("Hit Entity: " + hitEntity->GetName());
 
-	transform->SetPosition(XMVectorAdd(cameraTransform->GetPosition(), XMVectorScale(direction, 30.f)));
+	//auto meshEntity = ECSWorld::getInstance().FindEntityWithComponent<MeshComponent>();
+	//auto transform = ECSWorld::getInstance().GetComponent<TransformComponent>(meshEntity->GetID());
+
+	//auto cameraTransform = ECSWorld::getInstance().GetComponent<TransformComponent>(camera->GetEntityID());
+
+	//transform->SetPosition(XMVectorAdd(cameraTransform->GetPosition(), XMVectorScale(direction, 30.f)));
 }

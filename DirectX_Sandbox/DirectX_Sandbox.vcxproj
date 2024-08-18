@@ -179,6 +179,7 @@
     <ClInclude Include="MeshData.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Picker.h" />
+    <ClInclude Include="Raycast.h" />
     <ClInclude Include="RenderSystem.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="ResourcesContainer.h" />
@@ -212,6 +213,7 @@
     <ClCompile Include="MeshData.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Picker.cpp" />
+    <ClCompile Include="Raycast.cpp" />
     <ClCompile Include="RenderSystem.cpp" />
     <ClCompile Include="ResourcesContainer.cpp" />
     <ClCompile Include="SkyboxMaterial.cpp" />

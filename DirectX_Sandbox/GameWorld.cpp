@@ -37,9 +37,10 @@ void GameWorld::InitScene()
 	//ecsWorld->AddComponent(directionalLight2->GetID(), std::move(directLightComponent2));
 
 	Entity* rectEntity1 = ecsWorld->CreateEntity();
+	rectEntity1->SetName("Chicken");
 	auto meshComponent = std::make_unique<MeshComponent>(Model("../Assets/Models/Chicken/Chicken_01.obj"));
 	auto transformComponent = std::make_unique<TransformComponent>();
-	transformComponent->Translate(XMVectorSet(0, -10, 0, 1.0f));
+	transformComponent->Translate(XMVectorSet(30, -10, 0, 1.0f));
 	transformComponent->Scale(XMVectorSet(.1f, .1f, .1f, 1.0f));
 	ecsWorld->AddComponent(rectEntity1->GetID(), std::move(meshComponent));
 	ecsWorld->AddComponent(rectEntity1->GetID(), std::move(transformComponent));
@@ -70,6 +71,7 @@ void GameWorld::InitScene()
 	std::vector<MeshData> invertedBox = { MeshData(PrimitiveType::Cube, true) };
 	std::vector<std::shared_ptr<Material>> skyMaterials = { matSkybox };
 	auto meshSkybox = std::make_unique<MeshComponent>(Model(invertedBox, skyMaterials));
+	meshSkybox->isExcludedFromRaycast = true;
 	auto transformSkybox = std::make_unique<TransformComponent>();
 	ecsWorld->AddComponent(skyboxEntity->GetID(), std::move(meshSkybox));
 	ecsWorld->AddComponent(skyboxEntity->GetID(), std::move(transformSkybox));

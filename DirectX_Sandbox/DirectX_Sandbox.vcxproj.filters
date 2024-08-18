@@ -159,6 +159,9 @@
     <ClInclude Include="Picker.h">
       <Filter>Header Files\Singletons</Filter>
     </ClInclude>
+    <ClInclude Include="Raycast.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -246,6 +249,9 @@
       <Filter>imgui</Filter>
     </ClCompile>
     <ClCompile Include="Picker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Raycast.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

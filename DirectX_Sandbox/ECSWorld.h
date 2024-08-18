@@ -41,6 +41,7 @@ public:
 	void Initialize();
 	void Update();
 	Entity* CreateEntity();
+	Entity* GetEntity(int id) { return m_entities[id].get(); }
 	void DestroyEntity(int id);
 	void AddComponent(int entityID, std::unique_ptr<IComponent> component);//TODO: make generics
 	void RemoveComponent(int entityID, int componentTypeID);

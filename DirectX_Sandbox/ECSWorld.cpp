@@ -54,6 +54,7 @@ void ECSWorld::DestroyEntity(int id)
 
 void ECSWorld::AddComponent(int entityID, std::unique_ptr<IComponent> component)
 {
+    component->SetEntityID(entityID);
     m_entities[entityID]->AddComponent(component->GetTypeID());
     m_entityComponents[entityID][component->GetTypeID()] = std::move(component);
 }

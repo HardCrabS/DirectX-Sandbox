@@ -17,6 +17,8 @@ class MeshComponent : public Component<MeshComponent>
 	Model model;
 
 public:
+	bool isExcludedFromRaycast = false;
+public:
 	MeshComponent(const Model& model);
 	~MeshComponent();
 
