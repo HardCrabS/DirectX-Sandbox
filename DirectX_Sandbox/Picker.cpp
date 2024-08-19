@@ -20,7 +20,7 @@ void Picker::Pick(int x, int y)
 	float ndcX = (2.0f * x) / width - 1.0f;
 	float ndcY = 1.0f - (2.0f * y) / height;
 
-	logInfo("Pick at ndc: " + std::to_string(ndcX) + ", " + std::to_string(ndcY));
+	logInfo("[Picker] Pick at ndc: " + std::to_string(ndcX) + ", " + std::to_string(ndcY));
 
 	// Go back to world coords by inverting matrices
 	XMMATRIX projectionInverse = XMMatrixInverse(nullptr, camera->projectionMatrix);
@@ -39,21 +39,24 @@ void Picker::Pick(int x, int y)
 
 	XMVECTOR direction = XMVector3Normalize(XMVectorSubtract(farPlanePointInWorldSpace, nearPlanePointInWorldSpace));
 
-	logInfo("farPlanePointInWorldSpace: " + prettyXMVector(farPlanePointInWorldSpace));
-	logInfo("nearPlanePointInWorldSpace: " + prettyXMVector(nearPlanePointInWorldSpace));
+	//logInfo("farPlanePointInWorldSpace: " + prettyXMVector(farPlanePointInWorldSpace));
+	//logInfo("nearPlanePointInWorldSpace: " + prettyXMVector(nearPlanePointInWorldSpace));
 
-	logInfo("direction: " + prettyXMVector(direction));
+	//logInfo("direction: " + prettyXMVector(direction));
 
 	HitData hitData;
 	XMFLOAT3 origin;
 	XMStoreFloat3(&origin, nearPlanePointInWorldSpace);
 	if (Raycast::Shoot(origin, direction, hitData))
 	{
-		logInfo("Successfuly hit entity: " + std::to_string(hitData.entityID));
+		auto hitEntity = ECSWorld::getInstance().GetEntity(hitData.entityID);
+		logInfo("[Picker] Successfuly hit entity: " + hitEntity->GetName());
 	}
-
-	auto hitEntity = ECSWorld::getInstance().GetEntity(hitData.entityID);
-	logInfo("Hit Entity: " + hitEntity->GetName());
+	else
+	{
+		logInfo("[Picker] Nothing hit!");
+		return;
+	}
 
 	//auto meshEntity = ECSWorld::getInstance().FindEntityWithComponent<MeshComponent>();
 	//auto transform = ECSWorld::getInstance().GetComponent<TransformComponent>(meshEntity->GetID());

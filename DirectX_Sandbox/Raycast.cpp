@@ -3,11 +3,9 @@
 bool Raycast::Shoot(DirectX::XMFLOAT3 origin, DirectX::XMVECTOR direction, HitData& hitData)
 {
     auto objectsToCast = GetObjectsToCast();
-    logInfo("found objects to cast: " + std::to_string(objectsToCast.size()));
+    logInfo("[Raycast] Found objects to cast: " + std::to_string(objectsToCast.size()));
     for (auto& o : objectsToCast)
     {
-        logInfo("radius: " + std::to_string(static_cast<BoundingSphere*>(o.get())->GetRadius()));
-
         if (o->IsIntersectWithRaycat(XMLoadFloat3(&origin), direction)) 
         {
             hitData.entityID = o->entityID;
@@ -28,7 +26,9 @@ std::vector<std::unique_ptr<BoundingVolume>> Raycast::GetObjectsToCast()
         if (mesh->isExcludedFromRaycast)
             continue;
 
-        auto volume = std::make_unique<BoundingSphere>(mesh->GetModel().GetMeshData());
+        auto transform = ECSWorld::getInstance().GetComponent<TransformComponent>(mesh->GetEntityID());
+        auto volume = std::make_unique<BoundingSphere>(mesh->GetModel().GetMeshData(), transform->GetWorldMatrix());
+
         volume->entityID = mesh->GetEntityID();
         volumes.push_back(std::move(volume));
     }
@@ -36,16 +36,19 @@ std::vector<std::unique_ptr<BoundingVolume>> Raycast::GetObjectsToCast()
     return volumes;
 }
 
-BoundingSphere::BoundingSphere(const std::vector<MeshData>& meshData)
+BoundingSphere::BoundingSphere(const std::vector<MeshData>& meshData, const XMMATRIX& worldMatrix)
 {
     origin = CalculateOrigin(meshData);
-    radius = CalculateRadius(meshData, origin);
+    auto worldOrigin = XMVector3Transform(XMLoadFloat3(&origin), worldMatrix);
+    XMStoreFloat3(&origin, worldOrigin);
+
+    radius = CalculateRadius(meshData, origin, worldMatrix);
 }
 
 bool BoundingSphere::IsIntersectWithRaycat(DirectX::XMVECTOR rayOrigin, DirectX::XMVECTOR rayDirection)
 {
-    XMVECTOR originToCenter = XMVectorSubtract(XMLoadFloat3(&origin), rayOrigin);
-    float a = XMVector3Dot(rayDirection, rayDirection).m128_f32[0];
+    XMVECTOR originToCenter = XMVectorSubtract(rayOrigin, XMLoadFloat3(&origin));
+    float a = 1;
     float b = 2.0f * XMVector3Dot(rayDirection, originToCenter).m128_f32[0];
     float c = XMVector3Dot(originToCenter, originToCenter).m128_f32[0] - radius * radius;
 
@@ -60,14 +63,8 @@ bool BoundingSphere::IsIntersectWithRaycat(DirectX::XMVECTOR rayOrigin, DirectX:
     float t1 = (-b - sqrtDiscriminant) / (2.0f * a);
     float t2 = (-b + sqrtDiscriminant) / (2.0f * a);
 
-    if (t1 >= 0.0f)
-    {
+    if (t1 >= 0.0f || t2 >= 0.0f)
         return true;
-    }
-    else if (t2 >= 0.0f)
-    {
-        return true;
-    }
 
     return false; // Intersection is behind the ray origin
 }
@@ -93,7 +90,8 @@ DirectX::XMFLOAT3 BoundingSphere::CalculateOrigin(const std::vector<MeshData>& m
     return result;
 }
 
-float BoundingSphere::CalculateRadius(const std::vector<MeshData>& meshData, DirectX::XMFLOAT3 origin) const
+float BoundingSphere::CalculateRadius(const std::vector<MeshData>& meshData, DirectX::XMFLOAT3 origin, 
+    const XMMATRIX& worldMatrix) const
 {
     float radius = 0.0f;
 
@@ -103,7 +101,7 @@ float BoundingSphere::CalculateRadius(const std::vector<MeshData>& meshData, Dir
         {
             XMVECTOR vertexPos = XMLoadFloat3(&vertex.pos);
             XMVECTOR originVector = XMLoadFloat3(&origin);
-            XMVECTOR distanceVec = XMVectorSubtract(vertexPos, originVector);
+            XMVECTOR distanceVec = XMVector3Transform(XMVectorSubtract(vertexPos, originVector), worldMatrix);
             float distance = XMVector3Length(distanceVec).m128_f32[0];
 
             if (distance > radius)

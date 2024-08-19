@@ -36,7 +36,8 @@ class BoundingSphere : public BoundingVolume
 	float radius;
 
 public:
-	BoundingSphere(const std::vector<MeshData>& meshData);
+	BoundingSphere(const std::vector<MeshData>& meshData, const XMMATRIX& worldMatrix);
+	BoundingSphere(DirectX::XMVECTOR center, float radius) : radius(radius) { XMStoreFloat3(&origin, center); }
 	bool IsIntersectWithRaycat(DirectX::XMVECTOR origin, DirectX::XMVECTOR direction) override;
 
 	float GetRadius() const { return radius; }
@@ -44,5 +45,5 @@ private:
 	// calculates average position among all model vertices
 	DirectX::XMFLOAT3 CalculateOrigin(const std::vector<MeshData>& meshData) const;
 	// the radius is the distance from origin to the furthest vertex
-	float CalculateRadius(const std::vector<MeshData>& meshData, DirectX::XMFLOAT3 origin) const;
+	float CalculateRadius(const std::vector<MeshData>& meshData, DirectX::XMFLOAT3 origin, const XMMATRIX& worldMatrix) const;
 };
