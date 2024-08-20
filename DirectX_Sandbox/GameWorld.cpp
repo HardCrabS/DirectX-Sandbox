@@ -25,6 +25,8 @@ void GameWorld::InitScene()
 		0.4f * 3.14f, static_cast<float>(graphics->GetWidth()) / graphics->GetHeight(), 1.f, 1000.0f);
 	ecsWorld->AddComponent(cameraEntity->GetID(), std::move(cameraTransformComponent));
 	ecsWorld->AddComponent(cameraEntity->GetID(), std::move(cameraComponent));
+	ecsWorld->AddComponent(cameraEntity->GetID(), std::make_unique<OrbitComponent>());
+	ecsWorld->AddComponent(cameraEntity->GetID(), std::make_unique<ActiveCameraComponent>());
 
 	Entity* directionalLight = ecsWorld->CreateEntity();
 	auto directLightComponent = std::make_unique<DirectionalLightComponent>(
@@ -40,8 +42,8 @@ void GameWorld::InitScene()
 	rectEntity1->SetName("Chicken");
 	auto meshComponent = std::make_unique<MeshComponent>(Model("../Assets/Models/Chicken/Chicken_01.obj"));
 	auto transformComponent = std::make_unique<TransformComponent>();
-	transformComponent->Translate(XMVectorSet(300, -10, 0, 1.0f));
-	//transformComponent->Scale(XMVectorSet(.1f, .1f, .1f, 1.0f));
+	transformComponent->Translate(XMVectorSet(0, -10, 0, 1.0f));
+	transformComponent->Scale(XMVectorSet(.1f, .1f, .1f, 1.0f));
 	ecsWorld->AddComponent(rectEntity1->GetID(), std::move(meshComponent));
 	ecsWorld->AddComponent(rectEntity1->GetID(), std::move(transformComponent));
 

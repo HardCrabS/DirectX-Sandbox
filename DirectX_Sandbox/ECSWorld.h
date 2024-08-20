@@ -51,6 +51,7 @@ public:
 	Entity* FindEntityWithComponent() const;
 	template<class T>
 	std::vector<T*> FindAllComponentsOfType() const;
+	Entity* FindEntityByName(const std::string& name);
 };
 
 template<class T>

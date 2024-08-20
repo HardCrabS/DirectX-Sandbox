@@ -16,8 +16,8 @@ void RenderSystem::UpdateEntity(Entity* entity)
 
     if (cameraToRenderFrom == nullptr)
     {
-        auto cameraEntity = ecsWorld->FindEntityWithComponent<CameraComponent>();
-        assert(cameraEntity && "No entity with CameraComponent found!");
+        auto cameraEntity = ecsWorld->FindEntityWithComponent<ActiveCameraComponent>();
+        assert(cameraEntity && "No entity with ActiveCameraComponent found!");
         cameraToRenderFrom = ecsWorld->GetComponent<CameraComponent>(cameraEntity->GetID());
     }
 

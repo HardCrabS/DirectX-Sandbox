@@ -11,9 +11,11 @@ class InputManager
 	int rawX = 0;
 	int rawY = 0;
 	int mouseWheelLastDirection = 0;
+	bool keyStates[256];
 
 public:
 	Event<int, int> OnLeftMouseButtonClick;
+	Event<const unsigned char> OnKeyPressedEvent;
 
 private:
 	InputManager() {}
@@ -28,6 +30,7 @@ public:
 
 	void ClearDelta() { rawX = 0; rawY = 0; mouseWheelLastDirection = 0; }
 
+	// mouse
 	void OnLeftPressed(int x, int y) { 
 		leftIsDown = true; 
 		OnLeftMouseButtonClick.Notify(x, y);
@@ -37,6 +40,14 @@ public:
 	void OnRightReleased(int x, int y) { rightIsDown = false; }
 	void OnMouseMove(int x, int y) { rawX = x - this->x; rawY = this->y - y; this->x = x; this->y = y; }
 	void OnMouseWheel(int x, int y, int direction) { mouseWheelLastDirection = direction; }
+
+	// keyboard
+	bool IsKeyPressed(const unsigned char keycode) { return this->keyStates[keycode]; }
+	void OnKeyPressed(const unsigned char key) { 
+		this->keyStates[key] = true; 
+		OnKeyPressedEvent.Notify(key);
+	}
+	void OnKeyReleased(const unsigned char key) { this->keyStates[key] = false; }
 
 	bool IsLeftDown() { return leftIsDown; }
 	bool IsRightDown() { return rightIsDown; }

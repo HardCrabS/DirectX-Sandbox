@@ -15,6 +15,8 @@ void ECSWorld::Update()
 {
     for (auto& system : m_systems)
     {
+        system->Tick();
+
         for (auto& it : m_entities)
         {
             Entity* entity = it.second.get();
@@ -62,4 +64,15 @@ void ECSWorld::AddComponent(int entityID, std::unique_ptr<IComponent> component)
 void ECSWorld::RemoveComponent(int entityID, int componentTypeID)
 {
     m_entities[entityID]->RemoveComponent(componentTypeID);
+}
+
+Entity* ECSWorld::FindEntityByName(const std::string& name)
+{
+    for (auto& it : m_entities)
+    {
+        Entity* entity = it.second.get();
+        if (entity->GetName() == name)
+            return entity;
+    }
+    return nullptr;
 }

@@ -236,7 +236,20 @@ LRESULT CALLBACK WndProc(HWND hwnd,
     {
         if (wParam == VK_ESCAPE) {
             DestroyWindow(hwnd);
+            return 0;
         }
+        
+        unsigned char keycode = static_cast<unsigned char>(wParam);
+        const bool wasPressed = lParam & 0x40000000;
+        if (!wasPressed) {
+            inputManager->OnKeyPressed(keycode);
+        }
+        return 0;
+    }
+    case WM_KEYUP:
+    {
+        unsigned char keycode = static_cast<unsigned char>(wParam);
+        inputManager->OnKeyReleased(keycode);
         return 0;
     }
     case WM_MOUSEMOVE:

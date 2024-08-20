@@ -3,6 +3,13 @@
 #include <DirectXMath.h>
 using namespace DirectX;
 
+enum CameraControlMode
+{
+	None,
+	Orbit,
+	Free
+};
+
 class CameraComponent : public Component<CameraComponent>
 {
 public:
@@ -12,11 +19,7 @@ public:
 	XMVECTOR target;
 	XMVECTOR up;
 
-	const float ORBIT_SENSITIVITY = 0.01f;
-	const float ZOOM_SENSITIVITY = 0.5f;
-	float currentDistance;
-	const float MIN_DIST = 1.f;
-	const float MAX_DIST = 20.f;
+	CameraControlMode controlMode = CameraControlMode::None;
 
 	CameraComponent(const XMVECTOR& target, const XMVECTOR& up,
 		float fovDegrees, float aspectRatio, float nearZ, float farZ)
@@ -24,8 +27,27 @@ public:
 		logInfo("Created CameraComponent");
 		this->target = target;
 		this->up = up;
-		currentDistance = (MIN_DIST + MAX_DIST) / 2;
 		viewMatrix = XMMatrixIdentity();
 		projectionMatrix = XMMatrixPerspectiveFovLH(fovDegrees, aspectRatio, nearZ, farZ);
+	}
+};
+
+class ActiveCameraComponent : public Component<ActiveCameraComponent>
+{
+	// flag component for camera which is being used for rendering
+};
+
+class OrbitComponent : public Component<OrbitComponent>
+{
+public:
+	float orbitSensitivity = 0.01f;
+	float zoomSensitivity = 0.5f;
+	float currentDistance;
+	float minDist = 1.f;
+	float maxDist = 20.f;
+
+	OrbitComponent()
+	{
+		currentDistance = (minDist + maxDist) / 2;
 	}
 };
