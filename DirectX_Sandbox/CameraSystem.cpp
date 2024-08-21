@@ -15,7 +15,6 @@ bool CameraSystem::IsEntityHasRequiredComponents(const Entity* entity) const
 
 void CameraSystem::UpdateEntity(Entity* entity)
 {
-	auto ecsWorld = &ECSWorld::getInstance();
 	TransformComponent* transformComponent = entity->GetComponent<TransformComponent>();
 	CameraComponent* cameraComponent = entity->GetComponent<CameraComponent>();
 	ActiveCameraComponent* activeCameraComponent = entity->GetComponent<ActiveCameraComponent>();
@@ -62,10 +61,9 @@ void CameraSystem::OnKeyPressed(const unsigned char key)
 
 void CameraSystem::ControlOrbitCamera(Entity* entity)
 {
-	auto ecsWorld = &ECSWorld::getInstance();
 	TransformComponent* transformComponent = entity->GetComponent<TransformComponent>();
 	CameraComponent* cameraComponent = entity->GetComponent<CameraComponent>();
-	OrbitComponent* orbitComponent = entity->GetComponent<OrbitComponent>();
+	OrbitCameraComponent* orbitComponent = entity->GetComponent<OrbitCameraComponent>();
 
 	if (inputManager->GetLastMouseWheelDirection() != 0) {
 		orbitComponent->currentDistance +=
@@ -79,8 +77,8 @@ void CameraSystem::ControlOrbitCamera(Entity* entity)
 		transformComponent->SetPosition(DirectX::XMVectorAdd(cameraComponent->target, offset));
 	}
 	if (inputManager->IsRightDown()) {
-		float dx = -inputManager->GetRawX() * orbitComponent->orbitSensitivity;
-		float dy = -inputManager->GetRawY() * orbitComponent->orbitSensitivity;
+		float dx = inputManager->GetRawX() * orbitComponent->orbitSensitivity;
+		float dy = inputManager->GetRawY() * orbitComponent->orbitSensitivity;
 		if (transformComponent->GetPitch() + dy > XM_PIDIV2 || transformComponent->GetPitch() + dy < -XM_PIDIV2)
 			dy = 0;
 		transformComponent->Rotate(dx, dy, 0);
@@ -92,5 +90,41 @@ void CameraSystem::ControlOrbitCamera(Entity* entity)
 
 void CameraSystem::ControlFreeCamera(Entity* entity)
 {
+	TransformComponent* transformComponent = entity->GetComponent<TransformComponent>();
+	CameraComponent* camera = entity->GetComponent<CameraComponent>();
+	FreeCameraComponent* freeCamera = entity->GetComponent<FreeCameraComponent>();
 
+	int straightDirection = 0;
+	int sideDirection = 0;
+
+	if (inputManager->IsKeyPressed('W')) {
+		straightDirection = 1;
+	}
+	else if (inputManager->IsKeyPressed('S')) {
+		straightDirection = -1;
+	}
+	if (inputManager->IsKeyPressed('A')) {
+		sideDirection = -1;
+	}
+	else if (inputManager->IsKeyPressed('D')) {
+		sideDirection = 1;
+	}
+
+	if (inputManager->IsRightDown()) {
+		float dx = inputManager->GetRawX() * 0.01f;
+		float dy = -inputManager->GetRawY() * 0.01f;
+		if (transformComponent->GetPitch() + dy > XM_PIDIV2 || transformComponent->GetPitch() + dy < -XM_PIDIV2)
+			dy = 0;
+		transformComponent->Rotate(dx, dy, 0);
+	}
+
+	float forwardSpeed = straightDirection * freeCamera->moveSpeed;
+	float sideSpeed = sideDirection * freeCamera->moveSpeed;
+	XMVECTOR translation = XMVectorAdd(
+		XMVectorScale(transformComponent->GetForward(), forwardSpeed),
+		XMVectorScale(transformComponent->GetRight(), sideSpeed)
+	);
+	transformComponent->Translate(translation);
+
+	camera->target = XMVectorAdd(transformComponent->GetPosition(), transformComponent->GetForward());
 }

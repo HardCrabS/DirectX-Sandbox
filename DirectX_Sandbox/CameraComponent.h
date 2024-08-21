@@ -34,10 +34,10 @@ public:
 class ActiveCameraComponent : public Component<ActiveCameraComponent>
 {
 public:
-	CameraControlMode controlMode = CameraControlMode::None;
+	CameraControlMode controlMode = CameraControlMode::Orbit;
 };
 
-class OrbitComponent : public Component<OrbitComponent>
+class OrbitCameraComponent : public Component<OrbitCameraComponent>
 {
 public:
 	float orbitSensitivity = 0.01f;
@@ -46,8 +46,14 @@ public:
 	float minDist = 1.f;
 	float maxDist = 20.f;
 
-	OrbitComponent()
+	OrbitCameraComponent()
 	{
 		currentDistance = (minDist + maxDist) / 2;
 	}
+};
+
+class FreeCameraComponent : public Component<FreeCameraComponent>
+{
+public:
+	float moveSpeed = 0.2f;
 };

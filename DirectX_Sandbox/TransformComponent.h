@@ -12,6 +12,11 @@ class TransformComponent : public Component<TransformComponent>
 	XMVECTOR scale;
 	XMMATRIX worldMatrix;
 	XMVECTOR forward;
+	XMVECTOR right;
+
+	const XMVECTOR DEFAULT_FORWARD_VECTOR = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+	const XMVECTOR DEFAULT_UP_VECTOR = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	const XMVECTOR DEFAULT_RIGHT_VECTOR = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
 
 private:
 	void UpdateWorldMatrix();
@@ -31,5 +36,7 @@ public:
 	float GetYaw() const { return yaw; }
 	float GetPitch() const { return pitch; }
 	float GetRoll() const { return roll; }
+
 	XMVECTOR GetForward() const { return forward; }
+	XMVECTOR GetRight() const { return right; }
 };

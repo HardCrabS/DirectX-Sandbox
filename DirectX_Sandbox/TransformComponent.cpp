@@ -7,6 +7,9 @@ void TransformComponent::UpdateWorldMatrix()
 	XMMATRIX scalingMatrix = XMMatrixScalingFromVector(scale);
 
 	worldMatrix = scalingMatrix * rotationMatrix * translationMatrix;
+
+	forward = XMVector3TransformCoord(DEFAULT_FORWARD_VECTOR, rotationMatrix);
+	right = XMVector3TransformCoord(DEFAULT_RIGHT_VECTOR, rotationMatrix);
 }
 
 TransformComponent::TransformComponent() :
@@ -35,15 +38,19 @@ void TransformComponent::Rotate(float dYaw, float dPitch, float dRoll)
 	yaw = fmodf(yaw, DirectX::XM_2PI);
 	roll = fmodf(roll, DirectX::XM_2PI);
 
-	forward = XMVectorSet(
-		cosf(pitch) * cosf(yaw),
-		sinf(pitch),
-		cosf(pitch) * sinf(yaw),
-		0.0f
-	);
+	//forward = XMVectorSet(
+	//	cosf(pitch) * cosf(yaw),
+	//	sinf(pitch),
+	//	cosf(pitch) * sinf(yaw),
+	//	0.0f
+	//);
 
 	XMVECTOR quat = XMQuaternionRotationRollPitchYaw(pitch, yaw, roll);
-	rotation = XMQuaternionMultiply(rotation, quat);
+	rotation = quat;  // Set rotation directly to the new quaternion
+
+	//XMVECTOR quat = XMQuaternionRotationRollPitchYaw(pitch, yaw, roll);
+	//rotation = XMQuaternionMultiply(rotation, quat);
+	//rotation = XMQuaternionNormalize(rotation);
 	UpdateWorldMatrix();
 }
 
