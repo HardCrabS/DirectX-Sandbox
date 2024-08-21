@@ -10,16 +10,17 @@ void CameraSystem::Initialize()
 
 bool CameraSystem::IsEntityHasRequiredComponents(const Entity* entity) const
 {
-	return entity->HasComponents(TransformComponent::TypeID(), CameraComponent::TypeID());
+	return entity->HasComponents(TransformComponent::TypeID(), CameraComponent::TypeID(), ActiveCameraComponent::TypeID());
 }
 
 void CameraSystem::UpdateEntity(Entity* entity)
 {
 	auto ecsWorld = &ECSWorld::getInstance();
-	TransformComponent* transformComponent = ecsWorld->GetComponent<TransformComponent>(entity->GetID());
-	CameraComponent* cameraComponent = ecsWorld->GetComponent<CameraComponent>(entity->GetID());
+	TransformComponent* transformComponent = entity->GetComponent<TransformComponent>();
+	CameraComponent* cameraComponent = entity->GetComponent<CameraComponent>();
+	ActiveCameraComponent* activeCameraComponent = entity->GetComponent<ActiveCameraComponent>();
 
-	switch (cameraComponent->controlMode)
+	switch (activeCameraComponent->controlMode)
 	{
 		case CameraControlMode::Orbit:
 		{
@@ -45,26 +46,26 @@ void CameraSystem::OnKeyPressed(const unsigned char key)
 	auto ecsWorld = &ECSWorld::getInstance();
 	Entity* activeCamera = ecsWorld->FindEntityWithComponent<ActiveCameraComponent>();
 	assert(activeCamera != nullptr);
-	CameraComponent* cameraComponent = ecsWorld->GetComponent<CameraComponent>(activeCamera->GetID());
+	ActiveCameraComponent* activeCameraComponent = activeCamera->GetComponent<ActiveCameraComponent>();
 
 	if (inputManager->IsKeyPressed('O'))
 	{
 		logInfo("[CameraSystem] Set camera mode to Orbit");
-		cameraComponent->controlMode = CameraControlMode::Orbit;
+		activeCameraComponent->controlMode = CameraControlMode::Orbit;
 	}
 	else if (inputManager->IsKeyPressed('F'))
 	{
 		logInfo("[CameraSystem] Set camera mode to Free");
-		cameraComponent->controlMode = CameraControlMode::Free;
+		activeCameraComponent->controlMode = CameraControlMode::Free;
 	}
 }
 
 void CameraSystem::ControlOrbitCamera(Entity* entity)
 {
 	auto ecsWorld = &ECSWorld::getInstance();
-	TransformComponent* transformComponent = ecsWorld->GetComponent<TransformComponent>(entity->GetID());
-	CameraComponent* cameraComponent = ecsWorld->GetComponent<CameraComponent>(entity->GetID());
-	OrbitComponent* orbitComponent = ecsWorld->GetComponent<OrbitComponent>(entity->GetID());
+	TransformComponent* transformComponent = entity->GetComponent<TransformComponent>();
+	CameraComponent* cameraComponent = entity->GetComponent<CameraComponent>();
+	OrbitComponent* orbitComponent = entity->GetComponent<OrbitComponent>();
 
 	if (inputManager->GetLastMouseWheelDirection() != 0) {
 		orbitComponent->currentDistance +=

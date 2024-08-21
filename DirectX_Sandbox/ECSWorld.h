@@ -19,11 +19,7 @@
 class ECSWorld
 {
 	std::unordered_map<int, std::unique_ptr<Entity>> m_entities;
-	using Components = std::vector<std::unique_ptr<IComponent>>;
-	std::unordered_map<int, Components> m_entityComponents;
-
 	std::vector<int> m_freeEntityIDsPool;
-
 	std::vector<std::unique_ptr<System>> m_systems;
 
 private:
@@ -43,23 +39,12 @@ public:
 	Entity* CreateEntity();
 	Entity* GetEntity(int id) { return m_entities[id].get(); }
 	void DestroyEntity(int id);
-	void AddComponent(int entityID, std::unique_ptr<IComponent> component);//TODO: make generics
-	void RemoveComponent(int entityID, int componentTypeID);
-	template<class T>
-	T* GetComponent(int entityID) const;
 	template<class T>
 	Entity* FindEntityWithComponent() const;
 	template<class T>
 	std::vector<T*> FindAllComponentsOfType() const;
 	Entity* FindEntityByName(const std::string& name);
 };
-
-template<class T>
-T* ECSWorld::GetComponent(int entityID) const
-{
-	assert(m_entities.at(entityID)->HasComponents(T::TypeID()) && "No such component on entity!");
-	return static_cast<T*>(m_entityComponents.at(entityID)[T::TypeID()].get());
-}
 
 template<class T>
 Entity* ECSWorld::FindEntityWithComponent() const
@@ -78,16 +63,12 @@ template<class T>
 std::vector<T*> ECSWorld::FindAllComponentsOfType() const
 {
 	std::vector<T*> componentsOfType;
-	for (auto& it : m_entityComponents)
+	for (auto& it : m_entities)
 	{
-		auto& comps = it.second;
-		for (int i = 0; i < comps.size(); i++)
+		Entity* entity = it.second.get();
+		if (entity->HasComponents(T::TypeID()))
 		{
-			auto* comp = comps[i].get();
-			if (comp != nullptr && comp->GetTypeID() == T::TypeID())
-			{
-				componentsOfType.push_back(static_cast<T*>(comp));
-			}
+			componentsOfType.push_back(static_cast<T*>(entity->GetComponent<T>()));
 		}
 	}
 	return componentsOfType;

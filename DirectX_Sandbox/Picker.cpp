@@ -11,7 +11,7 @@ void Picker::Initialize()
 
 	auto cameraEntity = ECSWorld::getInstance().FindEntityWithComponent<CameraComponent>();
 	assert(cameraEntity && "No entity with CameraComponent found!");
-	camera = ECSWorld::getInstance().GetComponent<CameraComponent>(cameraEntity->GetID());
+	camera = cameraEntity->GetComponent<CameraComponent>();
 }
 
 void Picker::Pick(int x, int y)

@@ -26,7 +26,7 @@ std::vector<std::unique_ptr<BoundingVolume>> Raycast::GetObjectsToCast()
         if (mesh->isExcludedFromRaycast)
             continue;
 
-        auto transform = ECSWorld::getInstance().GetComponent<TransformComponent>(mesh->GetEntityID());
+        auto transform = ECSWorld::getInstance().GetEntity(mesh->GetEntityID())->GetComponent<TransformComponent>();
         auto volume = std::make_unique<BoundingSphere>(mesh->GetModel().GetMeshData(), transform->GetWorldMatrix());
 
         volume->entityID = mesh->GetEntityID();

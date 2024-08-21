@@ -40,7 +40,6 @@ Entity* ECSWorld::CreateEntity()
     auto entity = std::make_unique<Entity>(id);
     Entity* ep = entity.get();
     m_entities[id] = std::move(entity);
-    m_entityComponents[id] = Components(MAX_COMPONENTS_PER_ENTITY);
     logInfo("Created entity: " + std::to_string(id));
 
     return ep;
@@ -49,21 +48,8 @@ Entity* ECSWorld::CreateEntity()
 void ECSWorld::DestroyEntity(int id)
 {
     m_entities.erase(id);
-    m_entityComponents.erase(id);
     m_freeEntityIDsPool.push_back(id);
     logInfo("Removed entity: " + std::to_string(id));
-}
-
-void ECSWorld::AddComponent(int entityID, std::unique_ptr<IComponent> component)
-{
-    component->SetEntityID(entityID);
-    m_entities[entityID]->AddComponent(component->GetTypeID());
-    m_entityComponents[entityID][component->GetTypeID()] = std::move(component);
-}
-
-void ECSWorld::RemoveComponent(int entityID, int componentTypeID)
-{
-    m_entities[entityID]->RemoveComponent(componentTypeID);
 }
 
 Entity* ECSWorld::FindEntityByName(const std::string& name)

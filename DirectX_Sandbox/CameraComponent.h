@@ -19,8 +19,6 @@ public:
 	XMVECTOR target;
 	XMVECTOR up;
 
-	CameraControlMode controlMode = CameraControlMode::None;
-
 	CameraComponent(const XMVECTOR& target, const XMVECTOR& up,
 		float fovDegrees, float aspectRatio, float nearZ, float farZ)
 	{
@@ -32,9 +30,11 @@ public:
 	}
 };
 
+// flag component for camera which is being used for rendering
 class ActiveCameraComponent : public Component<ActiveCameraComponent>
 {
-	// flag component for camera which is being used for rendering
+public:
+	CameraControlMode controlMode = CameraControlMode::None;
 };
 
 class OrbitComponent : public Component<OrbitComponent>

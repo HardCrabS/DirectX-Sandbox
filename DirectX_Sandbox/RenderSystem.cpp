@@ -18,11 +18,11 @@ void RenderSystem::UpdateEntity(Entity* entity)
     {
         auto cameraEntity = ecsWorld->FindEntityWithComponent<ActiveCameraComponent>();
         assert(cameraEntity && "No entity with ActiveCameraComponent found!");
-        cameraToRenderFrom = ecsWorld->GetComponent<CameraComponent>(cameraEntity->GetID());
+        cameraToRenderFrom = cameraEntity->GetComponent<CameraComponent>();
     }
 
-    TransformComponent* transformComponent = ecsWorld->GetComponent<TransformComponent>(entity->GetID());
-    MeshComponent* meshComponent = ecsWorld->GetComponent<MeshComponent>(entity->GetID());
+    TransformComponent* transformComponent = entity->GetComponent<TransformComponent>();
+    MeshComponent* meshComponent = entity->GetComponent<MeshComponent>();
 
     ID3D11DeviceContext* devcon = Graphics::getInstance().GetDeviceContext();
 
