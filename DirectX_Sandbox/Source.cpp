@@ -117,6 +117,7 @@ void Update()
     ImGui::End();
 
     gameWorld.Update();
+    picker.Update();
 
     // Rendering
     // (Your code clears your framebuffer, renders your other stuff etc.)

@@ -100,8 +100,8 @@ float BoundingSphere::CalculateRadius(const std::vector<MeshData>& meshData, Dir
         for (const Vertex& vertex : md.GetVertices())
         {
             XMVECTOR vertexPos = XMLoadFloat3(&vertex.pos);
-            XMVECTOR originVector = XMLoadFloat3(&origin);
-            XMVECTOR distanceVec = XMVector3Transform(XMVectorSubtract(vertexPos, originVector), worldMatrix);
+            XMVECTOR vertexWorldPos = XMVector3Transform(XMLoadFloat3(&vertex.pos), worldMatrix);
+            XMVECTOR distanceVec = XMVectorSubtract(vertexWorldPos, XMLoadFloat3(&origin));
             float distance = XMVector3Length(distanceVec).m128_f32[0];
 
             if (distance > radius)

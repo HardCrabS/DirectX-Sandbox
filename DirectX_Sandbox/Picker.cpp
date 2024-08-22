@@ -9,9 +9,23 @@ void Picker::Initialize()
 {
 	InputManager::getInstance().OnLeftMouseButtonClick.Subscribe(std::bind(&Picker::Pick, this, std::placeholders::_1, std::placeholders::_2));
 
-	auto cameraEntity = ECSWorld::getInstance().FindEntityWithComponent<CameraComponent>();
-	assert(cameraEntity && "No entity with CameraComponent found!");
+	auto cameraEntity = ECSWorld::getInstance().FindEntityWithComponent<ActiveCameraComponent>();
+	assert(cameraEntity && "No entity with ActiveCameraComponent found!");
 	camera = cameraEntity->GetComponent<CameraComponent>();
+}
+
+void Picker::Update()
+{
+	if (pickedEntity.entity != nullptr)
+	{
+		auto cameraTransform = ECSWorld::getInstance().GetEntity(camera->GetEntityID())->GetComponent<TransformComponent>();
+		auto entityTransform = pickedEntity.entity->GetComponent<TransformComponent>();
+
+		entityTransform->SetPosition(XMVectorAdd(
+			cameraTransform->GetPosition(), 
+			XMVectorScale(cameraTransform->GetForward(), pickedEntity.distanceFromCamera)
+		));
+	}
 }
 
 void Picker::Pick(int x, int y)
@@ -39,10 +53,7 @@ void Picker::Pick(int x, int y)
 
 	XMVECTOR direction = XMVector3Normalize(XMVectorSubtract(farPlanePointInWorldSpace, nearPlanePointInWorldSpace));
 
-	//logInfo("farPlanePointInWorldSpace: " + prettyXMVector(farPlanePointInWorldSpace));
-	//logInfo("nearPlanePointInWorldSpace: " + prettyXMVector(nearPlanePointInWorldSpace));
-
-	//logInfo("direction: " + prettyXMVector(direction));
+	pickedEntity.entity = nullptr;  // drop whatever was picked
 
 	HitData hitData;
 	XMFLOAT3 origin;
@@ -51,17 +62,17 @@ void Picker::Pick(int x, int y)
 	{
 		auto hitEntity = ECSWorld::getInstance().GetEntity(hitData.entityID);
 		logInfo("[Picker] Successfuly hit entity: " + hitEntity->GetName());
+		pickedEntity.entity = hitEntity;
+
+		auto entityTransform = hitEntity->GetComponent<TransformComponent>();
+		auto cameraTransform = ECSWorld::getInstance().GetEntity(camera->GetEntityID())->GetComponent<TransformComponent>();
+		float distanceFromCamera = XMVectorGetX(
+			XMVector3Length(XMVectorSubtract(entityTransform->GetPosition(), cameraTransform->GetPosition())));
+		pickedEntity.distanceFromCamera = distanceFromCamera;
 	}
 	else
 	{
 		logInfo("[Picker] Nothing hit!");
 		return;
 	}
-
-	//auto meshEntity = ECSWorld::getInstance().FindEntityWithComponent<MeshComponent>();
-	//auto transform = ECSWorld::getInstance().GetComponent<TransformComponent>(meshEntity->GetID());
-
-	//auto cameraTransform = ECSWorld::getInstance().GetComponent<TransformComponent>(camera->GetEntityID());
-
-	//transform->SetPosition(XMVectorAdd(cameraTransform->GetPosition(), XMVectorScale(direction, 30.f)));
 }

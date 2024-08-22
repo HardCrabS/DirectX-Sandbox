@@ -37,14 +37,12 @@ void GameWorld::InitScene()
 	transformComponent->Translate(XMVectorSet(0, -10, 0, 1.0f));
 	transformComponent->Scale(XMVectorSet(.1f, .1f, .1f, 1.0f));
 
-	//Entity* bookEntity1 = ecsWorld->CreateEntity();
-	//bookEntity1->SetName("LittleBookcase");
-	//auto bookmeshComponent = std::make_unique<MeshComponent>(Model("../Assets/Models/LittleBookcase/model.obj"));
-	//auto booktransformComponent = std::make_unique<TransformComponent>();
-	//booktransformComponent->Translate(XMVectorSet(0, 0, 0, 1.0f));
-	//booktransformComponent->Scale(XMVectorSet(3, 3, 3, 1.0f));
-	//bookEntity1->AddComponent(std::move(bookmeshComponent));
-	//bookEntity1->AddComponent(std::move(booktransformComponent));
+	Entity* bookEntity1 = ecsWorld->CreateEntity();
+	bookEntity1->SetName("LittleBookcase");
+	bookEntity1->AddComponent<MeshComponent>(Model("../Assets/Models/LittleBookcase/model.obj"));
+	auto booktransformComponent = bookEntity1->AddComponent<TransformComponent>();
+	booktransformComponent->Translate(XMVectorSet(0, 0, 0, 1.0f));
+	booktransformComponent->Scale(XMVectorSet(8, 8, 8, 1.0f));
 
 	Entity* skyboxEntity = ecsWorld->CreateEntity();
 	std::string skyboxPath = "../Assets/Textures/YokotamaCitySkybox.dds";
