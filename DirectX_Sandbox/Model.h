@@ -9,6 +9,7 @@
 #include "Logger.h"
 #include "MeshData.h"
 #include "Material.h"
+#include "Constants.h"
 
 using namespace DirectX;
 
@@ -37,7 +38,6 @@ public:
 private:
 	void LoadModel(const std::string& filename);
 	void ProcessNode(aiNode* node, const aiScene* scene);
-	//std::pair<MeshData, std::shared_ptr<Material>> ProcessMesh(const aiMesh* mesh, const aiScene* scene);
 	MeshData ProcessMesh(const aiMesh* mesh, const aiScene* scene);
 	std::shared_ptr<Material> ProcessMaterial(const aiMesh* mesh, const aiScene* scene);
 };

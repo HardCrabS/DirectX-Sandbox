@@ -9,6 +9,17 @@
 #include "DirectionalLightComponent.h"
 #include "Model.h"
 
+void GameWorld::Initialize()
+{
+	InitScene();
+	SubscribeToEvents();
+}
+
+void GameWorld::Update()
+{
+	ECSWorld::getInstance().Update();
+}
+
 void GameWorld::InitScene()
 {
 	ECSWorld* ecsWorld = &ECSWorld::getInstance();
@@ -32,23 +43,23 @@ void GameWorld::InitScene()
 
 	Entity* rectEntity1 = ecsWorld->CreateEntity();
 	rectEntity1->SetName("Chicken");
-	rectEntity1->AddComponent<MeshComponent>(Model("../Assets/Models/Chicken/Chicken_01.obj"));
+	rectEntity1->AddComponent<MeshComponent>(Model(ASSETS_FOLDER + "Models/Chicken/Chicken_01.obj"));
 	auto transformComponent = rectEntity1->AddComponent<TransformComponent>();
 	transformComponent->Translate(XMVectorSet(0, -10, 0, 1.0f));
 	transformComponent->Scale(XMVectorSet(.1f, .1f, .1f, 1.0f));
 
 	Entity* bookEntity1 = ecsWorld->CreateEntity();
 	bookEntity1->SetName("LittleBookcase");
-	bookEntity1->AddComponent<MeshComponent>(Model("../Assets/Models/LittleBookcase/model.obj"));
+	bookEntity1->AddComponent<MeshComponent>(Model(ASSETS_FOLDER + "Models/LittleBookcase/model.obj"));
 	auto booktransformComponent = bookEntity1->AddComponent<TransformComponent>();
 	booktransformComponent->Translate(XMVectorSet(0, 0, 0, 1.0f));
 	booktransformComponent->Scale(XMVectorSet(8, 8, 8, 1.0f));
 
 	Entity* skyboxEntity = ecsWorld->CreateEntity();
-	std::string skyboxPath = "../Assets/Textures/YokotamaCitySkybox.dds";
-	auto shaderResource = graphics->GetResourcesContainer().GetTexture(skyboxPath, nullptr, TextureFormat::DDS);
+	std::string skyboxTextureName = ASSETS_FOLDER + TEXTURES_FOLDER + "YokotamaCitySkybox.dds";
+	auto shaderResource = graphics->GetResourcesContainer().GetTexture(skyboxTextureName, nullptr, TextureFormat::DDS);
 	auto matSkybox = std::make_shared<SkyboxMaterial>(shaderResource, cameraTransformComponent);
-	graphics->GetResourcesContainer().RegisterMaterial(skyboxPath, matSkybox);
+	graphics->GetResourcesContainer().RegisterMaterial(skyboxTextureName, matSkybox);
 
 	std::vector<MeshData> invertedBox = { MeshData(PrimitiveType::Cube, true) };
 	std::vector<std::shared_ptr<Material>> skyMaterials = { matSkybox };
@@ -57,7 +68,18 @@ void GameWorld::InitScene()
 	skyboxEntity->AddComponent<TransformComponent>();
 }
 
-void GameWorld::Update()
+void GameWorld::SubscribeToEvents()
 {
-	ECSWorld::getInstance().Update();
+	auto editorEvents = &EditorEventDispatcher::getInstance();
+	editorEvents->OnInstantiateEntityByAssetRequest.Subscribe(std::bind(&GameWorld::HandleAssetCreateRequest, this, std::placeholders::_1));
+}
+
+void GameWorld::HandleAssetCreateRequest(std::string assetName)
+{
+	logInfo("[GameWorld] HandleAssetCreateRequest: " + assetName);
+
+	Entity* entity = ECSWorld::getInstance().CreateEntity();
+	entity->SetName(assetName);
+	entity->AddComponent<MeshComponent>(Model(assetName));
+	entity->AddComponent<TransformComponent>();
 }

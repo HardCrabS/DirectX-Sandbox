@@ -30,11 +30,15 @@ void Picker::Update()
 
 void Picker::Pick(int x, int y)
 {
+	if (pickedEntity.entity) {
+		// drop whatever is already picked
+		pickedEntity.entity = nullptr;
+		return;
+	}
+
 	// Normalize X and Y Coordinates
 	float ndcX = (2.0f * x) / width - 1.0f;
 	float ndcY = 1.0f - (2.0f * y) / height;
-
-	logInfo("[Picker] Pick at ndc: " + std::to_string(ndcX) + ", " + std::to_string(ndcY));
 
 	// Go back to world coords by inverting matrices
 	XMMATRIX projectionInverse = XMMatrixInverse(nullptr, camera->projectionMatrix);
@@ -53,15 +57,13 @@ void Picker::Pick(int x, int y)
 
 	XMVECTOR direction = XMVector3Normalize(XMVectorSubtract(farPlanePointInWorldSpace, nearPlanePointInWorldSpace));
 
-	pickedEntity.entity = nullptr;  // drop whatever was picked
-
 	HitData hitData;
 	XMFLOAT3 origin;
 	XMStoreFloat3(&origin, nearPlanePointInWorldSpace);
 	if (Raycast::Shoot(origin, direction, hitData))
 	{
 		auto hitEntity = ECSWorld::getInstance().GetEntity(hitData.entityID);
-		logInfo("[Picker] Successfuly hit entity: " + hitEntity->GetName());
+		//logInfo("[Picker] Successfuly hit entity: " + hitEntity->GetName());
 		pickedEntity.entity = hitEntity;
 
 		auto entityTransform = hitEntity->GetComponent<TransformComponent>();
@@ -72,7 +74,6 @@ void Picker::Pick(int x, int y)
 	}
 	else
 	{
-		logInfo("[Picker] Nothing hit!");
 		return;
 	}
 }

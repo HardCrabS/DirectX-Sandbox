@@ -40,6 +40,12 @@
     <Filter Include="imgui">
       <UniqueIdentifier>{45a89ef3-5cfc-48ad-89d0-15af47a17860}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Editor">
+      <UniqueIdentifier>{e22269dd-183e-4561-9f5b-805c6d047e70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Editor">
+      <UniqueIdentifier>{9a2a6ec9-7764-45e8-8043-5aaafdf1801c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -162,6 +168,21 @@
     <ClInclude Include="Raycast.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Editor\AssetBrowserEditor.h">
+      <Filter>Header Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Editor\EditorBaseView.h">
+      <Filter>Header Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Editor\Editor.h">
+      <Filter>Header Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Editor\EditorEventDispatcher.h">
+      <Filter>Header Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Singleton.h">
+      <Filter>Header Files\Singletons</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -253,6 +274,12 @@
     </ClCompile>
     <ClCompile Include="Raycast.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Editor\AssetBrowserEditor.cpp">
+      <Filter>Source Files\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Editor\Editor.cpp">
+      <Filter>Source Files\Editor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

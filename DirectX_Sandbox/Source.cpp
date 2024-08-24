@@ -17,6 +17,7 @@
 #include "InputManager.h"
 #include "Logger.h"
 #include "Picker.h"
+#include "Editor/Editor.h"
 
 #include "imgui.h"
 #include "backends/imgui_impl_dx11.h"
@@ -35,6 +36,7 @@ Graphics* graphics = &Graphics::getInstance();
 GameWorld gameWorld;
 InputManager* inputManager = &InputManager::getInstance();
 Picker picker(Width, Height);
+Editor editor;
 
 std::chrono::high_resolution_clock::time_point lastFrameTime;
 float deltaTime = 0.0f;
@@ -63,7 +65,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
     CreateConsole();
 
     graphics->Init(Width, Height, hInstance, hwnd);
-    gameWorld.InitScene();
+    gameWorld.Initialize();
 
     picker.Initialize();
 
@@ -116,11 +118,11 @@ void Update()
     ImGui::Text("Frame Time: %.4f ms", deltaTime * 1000.0f);
     ImGui::End();
 
+    editor.Draw();
+
     gameWorld.Update();
     picker.Update();
 
-    // Rendering
-    // (Your code clears your framebuffer, renders your other stuff etc.)
     ImGui::Render();
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
@@ -169,13 +171,16 @@ bool InitializeWindow(HINSTANCE hInstance,
         return 1;
     }
 
+    RECT rect = { 0, 0, Width, Height };
+    AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, FALSE);
+
     hwnd = CreateWindowEx(
         NULL,
         WndClassName,
         L"DirectX11 Sandbox",
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT,
-        width, height,
+        rect.right - rect.left, rect.bottom - rect.top,
         NULL,
         NULL,
         hInstance,

@@ -3,7 +3,6 @@
 bool Raycast::Shoot(DirectX::XMFLOAT3 origin, DirectX::XMVECTOR direction, HitData& hitData)
 {
     auto objectsToCast = GetObjectsToCast();
-    logInfo("[Raycast] Found objects to cast: " + std::to_string(objectsToCast.size()));
     for (auto& o : objectsToCast)
     {
         if (o->IsIntersectWithRaycat(XMLoadFloat3(&origin), direction)) 

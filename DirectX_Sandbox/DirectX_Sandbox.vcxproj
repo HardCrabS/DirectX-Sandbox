@@ -77,7 +77,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\DirectXTex-main\DirectXTex;$(SolutionDir)ThirdParty\stb-master;$(SolutionDir)ThirdParty\ImGui;$(SolutionDir)ThirdParty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\DirectXTex-main\DirectXTex;$(SolutionDir)ThirdParty\stb-master;$(SolutionDir)ThirdParty\ImGui;$(SolutionDir)ThirdParty;$(SolutionDir)DirectX_Sandbox;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>$(SolutionDir)ThirdParty/ImGui/backends;%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
     </ClCompile>
     <Link>
@@ -96,7 +96,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\DirectXTex-main\DirectXTex;$(SolutionDir)ThirdParty\stb-master;$(SolutionDir)ThirdParty\ImGui;$(SolutionDir)ThirdParty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\DirectXTex-main\DirectXTex;$(SolutionDir)ThirdParty\stb-master;$(SolutionDir)ThirdParty\ImGui;$(SolutionDir)ThirdParty;$(SolutionDir)DirectX_Sandbox;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>$(SolutionDir)ThirdParty/ImGui/backends;%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
     </ClCompile>
     <Link>
@@ -115,7 +115,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\DirectXTex-main\DirectXTex;$(SolutionDir)ThirdParty\stb-master;$(SolutionDir)ThirdParty\ImGui;$(SolutionDir)ThirdParty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\DirectXTex-main\DirectXTex;$(SolutionDir)ThirdParty\stb-master;$(SolutionDir)ThirdParty\ImGui;$(SolutionDir)ThirdParty;$(SolutionDir)DirectX_Sandbox;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>$(SolutionDir)ThirdParty/ImGui/backends;%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
     </ClCompile>
     <Link>
@@ -138,7 +138,7 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\DirectXTex-main\DirectXTex;$(SolutionDir)ThirdParty\stb-master;$(SolutionDir)ThirdParty\ImGui;$(SolutionDir)ThirdParty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\DirectXTex-main\DirectXTex;$(SolutionDir)ThirdParty\stb-master;$(SolutionDir)ThirdParty\ImGui;$(SolutionDir)ThirdParty;$(SolutionDir)DirectX_Sandbox;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>$(SolutionDir)ThirdParty/ImGui/backends;%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
     </ClCompile>
     <Link>
@@ -166,6 +166,10 @@
     <ClInclude Include="DirectionalLightComponent.h" />
     <ClInclude Include="DirectX_Sandbox.h" />
     <ClInclude Include="ECSWorld.h" />
+    <ClInclude Include="Editor\AssetBrowserEditor.h" />
+    <ClInclude Include="Editor\Editor.h" />
+    <ClInclude Include="Editor\EditorBaseView.h" />
+    <ClInclude Include="Editor\EditorEventDispatcher.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="framework.h" />
@@ -183,6 +187,7 @@
     <ClInclude Include="RenderSystem.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="ResourcesContainer.h" />
+    <ClInclude Include="Singleton.h" />
     <ClInclude Include="SkyboxMaterial.h" />
     <ClInclude Include="SolidMaterial.h" />
     <ClInclude Include="SurfaceMaterial.h" />
@@ -203,6 +208,8 @@
     <ClCompile Include="CameraSystem.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="ECSWorld.cpp" />
+    <ClCompile Include="Editor\AssetBrowserEditor.cpp" />
+    <ClCompile Include="Editor\Editor.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="GameWorld.cpp" />
     <ClCompile Include="Graphics.cpp" />

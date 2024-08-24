@@ -4,7 +4,7 @@
 #include "SolidMaterial.h"
 #include "SurfaceMaterial.h"
 
-#define DETAILED_MATERIAL_LOG
+//#define DETAILED_MATERIAL_LOG
 
 
 void logNodeHierarchy(aiNode* node);
@@ -14,7 +14,8 @@ void LogMaterialInfo(const aiMaterial* material, unsigned int index);
 void Model::LoadModel(const std::string& filename)
 {
 	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(filename,
+	const aiScene* scene = importer.ReadFile(
+		filename,
 		aiProcess_Triangulate |
 		aiProcess_FlipUVs |
 		aiProcess_CalcTangentSpace |
@@ -24,8 +25,6 @@ void Model::LoadModel(const std::string& filename)
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
 		logError(std::string("ASSIMP::") + importer.GetErrorString());
-		// TODO: make proper exception instead of assert
-		assert(false && "Could not open the file");
 		return;
 	}
 
