@@ -7,7 +7,7 @@
 #include <vector>
 #include "ResourcesContainer.h"
 #include "Vertex.h"
-#include "Material.h"
+#include "Materials/Material.h"
 
 using namespace DirectX;
 

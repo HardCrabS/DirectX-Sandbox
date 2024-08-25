@@ -12,11 +12,11 @@
 #include <iostream>
 #include <fstream>
 #include <chrono>
-#include "Graphics.h"
-#include "GameWorld.h"
-#include "InputManager.h"
-#include "Logger.h"
-#include "Picker.h"
+#include "Managers/Graphics.h"
+#include "Managers/GameWorld.h"
+#include "Managers/InputManager.h"
+#include "Managers/Logger.h"
+#include "Managers/Picker.h"
 #include "Editor/Editor.h"
 
 #include "imgui.h"

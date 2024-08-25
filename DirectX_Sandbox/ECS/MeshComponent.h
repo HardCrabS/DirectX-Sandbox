@@ -1,12 +1,12 @@
 #pragma once
-#include "Component.h"
+#include "ECS/Component.h"
 #include <d3d11.h>
 #include <vector>
 #include <DirectXMath.h>
 #include "Vertex.h"
-#include "Graphics.h"
+#include "Managers/Graphics.h"
 #include "MeshData.h"
-#include "Material.h"
+#include "Materials/Material.h"
 #include "Model.h"
 
 class MeshComponent : public Component<MeshComponent>

@@ -4,7 +4,7 @@
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
 #include <DirectXTex.h>
-#include "Logger.h"
+#include "Managers/Logger.h"
 #include "Utils.h"
 
 inline const int MAX_NUM_OF_DIRECTIONAL_LIGHTS = 3;

@@ -1,6 +1,6 @@
 #pragma once
 #include "Material.h"
-#include "TransformComponent.h"
+#include "ECS/TransformComponent.h"
 
 struct SkyboxBuffer
 {

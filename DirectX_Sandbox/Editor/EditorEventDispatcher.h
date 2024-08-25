@@ -1,7 +1,7 @@
 #pragma once	
 #include "string"
 #include "Event.h"
-#include "Singleton.h"
+#include "Managers/Singleton.h"
 
 class EditorEventDispatcher : public Singleton<EditorEventDispatcher>
 {

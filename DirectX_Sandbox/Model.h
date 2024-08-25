@@ -6,9 +6,9 @@
 #include <DirectXMath.h>
 #include <vector>
 #include <string>
-#include "Logger.h"
+#include "Managers/Logger.h"
 #include "MeshData.h"
-#include "Material.h"
+#include "Materials/Material.h"
 #include "Constants.h"
 
 using namespace DirectX;

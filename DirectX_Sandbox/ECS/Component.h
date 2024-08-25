@@ -1,6 +1,6 @@
 #pragma once
-#include "IComponent.h"
-#include "Logger.h"
+#include "ECS/IComponent.h"
+#include "Managers/Logger.h"
 
 class ComponentTypeIDCounter
 {

@@ -1,5 +1,5 @@
 #include "imgui.h"
-#include "Logger.h"
+#include "Managers/Logger.h"
 
 class EditorBaseView
 {

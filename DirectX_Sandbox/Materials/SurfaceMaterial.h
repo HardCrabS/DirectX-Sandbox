@@ -1,6 +1,6 @@
 #pragma once
 #include "Material.h"
-#include "Graphics.h"
+#include "Managers/Graphics.h"
 
 class SurfaceMaterial : public Material
 {

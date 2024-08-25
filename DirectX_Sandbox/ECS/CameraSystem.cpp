@@ -1,4 +1,4 @@
-#include "CameraSystem.h"
+#include "ECS/CameraSystem.h"
 #include <algorithm>
 
 void CameraSystem::Initialize()

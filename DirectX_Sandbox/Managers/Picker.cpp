@@ -1,6 +1,6 @@
-#include "Managers/Picker.h"
-#include "Managers/InputManager.h"
-#include "Managers/ECSWorld.h"
+#include "Picker.h"
+#include "InputManager.h"
+#include "ECSWorld.h"
 #include "ECS/MeshComponent.h"
 #include "ECS/TransformComponent.h"
 

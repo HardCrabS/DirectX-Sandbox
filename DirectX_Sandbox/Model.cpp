@@ -1,8 +1,8 @@
 #include "Model.h"
 #include <sstream>
-#include "Graphics.h"
-#include "SolidMaterial.h"
-#include "SurfaceMaterial.h"
+#include "Managers/Graphics.h"
+#include "Materials/SolidMaterial.h"
+#include "Materials/SurfaceMaterial.h"
 
 //#define DETAILED_MATERIAL_LOG
 

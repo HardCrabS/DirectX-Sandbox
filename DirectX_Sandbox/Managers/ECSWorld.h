@@ -3,16 +3,16 @@
 #include <vector>
 #include <memory>
 
-#include "Entity.h"
-#include "Component.h"
-#include "IComponent.h"
-#include "System.h"
+#include "ECS/Entity.h"
+#include "ECS/Component.h"
+#include "ECS/IComponent.h"
+#include "ECS/System.h"
 #include "Constants.h"
 #include "Logger.h"
 
 // specific systems =============
-#include "CameraSystem.h"
-#include "RenderSystem.h"
+#include "ECS/CameraSystem.h"
+#include "ECS/RenderSystem.h"
 //===============================
 
 

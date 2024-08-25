@@ -3,8 +3,8 @@
 #include <memory>
 #include "DirectXMath.h"
 #include "MeshData.h"
-#include "ECSWorld.h"
-#include "MeshComponent.h"
+#include "Managers/ECSWorld.h"
+#include "ECS/MeshComponent.h"
 
 class BoundingVolume;
 class BoundingSphere;

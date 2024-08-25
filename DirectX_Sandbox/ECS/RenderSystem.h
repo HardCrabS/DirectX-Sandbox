@@ -1,7 +1,7 @@
 #pragma once
-#include "System.h"
-#include "ECSWorld.h"
-#include "Graphics.h"
+#include "ECS/System.h"
+#include "Managers/ECSWorld.h"
+#include "Managers/Graphics.h"
 #include "CameraComponent.h"
 #include "MeshComponent.h"
 #include "DirectionalLightComponent.h"

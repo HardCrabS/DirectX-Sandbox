@@ -1,9 +1,9 @@
 #pragma once
-#include "System.h"
+#include "ECS/System.h"
 #include "TransformComponent.h"
 #include "CameraComponent.h"
-#include "ECSWorld.h"
-#include "InputManager.h"
+#include "Managers/ECSWorld.h"
+#include "Managers/InputManager.h"
 
 
 class CameraSystem : public System

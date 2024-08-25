@@ -1,5 +1,5 @@
 #pragma once
-#include "CameraComponent.h"
+#include "ECS/CameraComponent.h"
 #include "Raycast.h"
 
 struct PickedEntity

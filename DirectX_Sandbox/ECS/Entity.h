@@ -2,7 +2,7 @@
 #include <bitset>
 #include <vector>
 #include <assert.h>
-#include "Component.h"
+#include "ECS/Component.h"
 #include "Constants.h"
 
 class ECSWorld;

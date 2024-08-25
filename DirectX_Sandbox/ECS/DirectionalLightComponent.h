@@ -1,7 +1,7 @@
 #pragma once
 #include <DirectXMath.h>
-#include "Component.h"
-#include "Material.h"
+#include "ECS/Component.h"
+#include "Materials/Material.h"
 
 class DirectionalLightComponent : public Component<DirectionalLightComponent>
 {

@@ -2,7 +2,7 @@
 #include <d3d11.h>
 #include <wrl/client.h>
 #include <DirectXTex.h>
-#include "Material.h"
+#include "Materials/Material.h"
 #include <unordered_map>
 #include <string>
 #include <memory>
