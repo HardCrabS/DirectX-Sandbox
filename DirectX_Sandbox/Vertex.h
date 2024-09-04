@@ -12,5 +12,6 @@ struct Vertex
     XMFLOAT3 pos;
     XMFLOAT4 color;
     XMFLOAT3 normal;
+    XMFLOAT3 tangent;
     XMFLOAT2 UV;
 };

@@ -303,5 +303,6 @@
     <FxCompile Include="solid.fx" />
     <FxCompile Include="skybox.fx" />
     <FxCompile Include="light.fx" />
+    <FxCompile Include="base.fx" />
   </ItemGroup>
 </Project>

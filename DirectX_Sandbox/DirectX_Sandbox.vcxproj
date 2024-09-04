@@ -239,6 +239,7 @@
     <Image Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="base.fx" />
     <FxCompile Include="light.fx" />
     <FxCompile Include="skybox.fx" />
     <FxCompile Include="surface.fx" />

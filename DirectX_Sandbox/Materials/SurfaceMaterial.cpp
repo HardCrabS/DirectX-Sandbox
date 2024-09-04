@@ -1,7 +1,7 @@
 #include "SurfaceMaterial.h"
 
-SurfaceMaterial::SurfaceMaterial(ID3D11ShaderResourceView* texture0)
-	: Material(L"surface.fx", "VS", L"surface.fx", "PS"), texture0(texture0)
+SurfaceMaterial::SurfaceMaterial()
+	: Material(L"surface.fx", "VS", L"surface.fx", "PS")
 {
 }
 
@@ -9,8 +9,10 @@ void SurfaceMaterial::UpdateResources(DirectX::XMMATRIX worldMatrix, DirectX::XM
 {
 	Material::UpdateResources(worldMatrix, viewMatrix, projectionMatrix);
 
-	if (texture0 != nullptr)
-		devcon->PSSetShaderResources(0, 1, &texture0);
+	if (diffuseTexture != nullptr)
+		devcon->PSSetShaderResources(0, 1, &diffuseTexture);
+	if (normalTexture != nullptr)
+		devcon->PSSetShaderResources(1, 1, &normalTexture);
 	devcon->PSSetSamplers(0, 1, &samplerLinear);
 }
 

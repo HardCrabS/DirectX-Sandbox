@@ -12,12 +12,11 @@ cbuffer PS_lightsBuffer : register(b0)
 }
 
 
-float3 CalculatePhong(DirectionalLight directionalLight, float3 normal, float3 viewDir)
+float3 CalculateLight(DirectionalLight directionalLight, float3 normal)
 {
-    // all vectors must be in view space
-    float ambientStrength = 0.1;
+    float AMBIENT_STRENGTH = 0.1;
 
-    float3 ambient = ambientStrength;
+    float3 ambient = AMBIENT_STRENGTH;
     
     float3 norm = normalize(normal);
     float3 lightDir = directionalLight.direction;
@@ -25,10 +24,22 @@ float3 CalculatePhong(DirectionalLight directionalLight, float3 normal, float3 v
     float diff = max(-dot(norm, lightDir), 0.0);
     float3 diffuse = diff * directionalLight.intensity;
 
-    float specularStrength = 0.5;
-    float reflectDir = reflect(-lightDir, norm);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 4);
-    float3 specular = specularStrength * spec;
+    //float specularStrength = 0.01;
+    //float reflectDir = reflect(-lightDir, norm);
+    //float spec = pow(max(dot(viewDir, reflectDir), 0.0), 4);
+    //float3 specular = specularStrength * spec;
     
-    return (ambient + diffuse + specular) * directionalLight.color;
+    return (ambient + diffuse) * directionalLight.color;
+}
+
+float3 CalculateTotalDirectionalLightAffect(float3 normal)
+{
+    float3 result;
+    for (int i = 0; i < MAX_DIRECTIONAL_LIGHTS; i++)
+    {
+        if (length(directionalLights[i].direction) == 0)
+            break; // no more lights found
+        result += CalculateLight(directionalLights[i], normal);
+    }
+    return result;
 }

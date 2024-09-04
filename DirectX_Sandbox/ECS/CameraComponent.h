@@ -55,5 +55,5 @@ public:
 class FreeCameraComponent : public Component<FreeCameraComponent>
 {
 public:
-	float moveSpeed = 0.2f;
+	float moveSpeed = 0.03f;
 };

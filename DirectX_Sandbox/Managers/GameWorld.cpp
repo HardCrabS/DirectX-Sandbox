@@ -32,7 +32,7 @@ void GameWorld::InitScene()
 	cameraEntity->AddComponent<CameraComponent>(
 		XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f),
 		XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f),
-		0.4f * 3.14f, static_cast<float>(graphics->GetWidth()) / graphics->GetHeight(), 1.f, 1000.0f
+		0.4f * 3.14f, static_cast<float>(graphics->GetWidth()) / graphics->GetHeight(), 0.1f, 1000.0f
 	);
 	cameraEntity->AddComponent<OrbitCameraComponent>();
 	cameraEntity->AddComponent<FreeCameraComponent>();
@@ -41,19 +41,19 @@ void GameWorld::InitScene()
 	Entity* directionalLight = ecsWorld->CreateEntity();
 	directionalLight->AddComponent<DirectionalLightComponent>(XMVectorSet(1, -1, 1, 0), XMFLOAT3(1, 1, 1), 1.f);
 
-	Entity* rectEntity1 = ecsWorld->CreateEntity();
-	rectEntity1->SetName("Chicken");
-	rectEntity1->AddComponent<MeshComponent>(Model(ASSETS_FOLDER + "Models/Chicken/Chicken_01.obj"));
-	auto transformComponent = rectEntity1->AddComponent<TransformComponent>();
-	transformComponent->Translate(XMVectorSet(0, -10, 0, 1.0f));
-	transformComponent->Scale(XMVectorSet(.1f, .1f, .1f, 1.0f));
+	//Entity* rectEntity1 = ecsWorld->CreateEntity();
+	//rectEntity1->SetName("Chicken");
+	//rectEntity1->AddComponent<MeshComponent>(Model(ASSETS_FOLDER + "Models/Chicken/Chicken_01.obj"));
+	//auto transformComponent = rectEntity1->AddComponent<TransformComponent>();
+	//transformComponent->Translate(XMVectorSet(20, -10, 0, 1.0f));
+	//transformComponent->Scale(XMVectorSet(.1f, .1f, .1f, 1.0f));
 
-	Entity* bookEntity1 = ecsWorld->CreateEntity();
-	bookEntity1->SetName("LittleBookcase");
-	bookEntity1->AddComponent<MeshComponent>(Model(ASSETS_FOLDER + "Models/LittleBookcase/model.obj"));
-	auto booktransformComponent = bookEntity1->AddComponent<TransformComponent>();
-	booktransformComponent->Translate(XMVectorSet(0, 0, 0, 1.0f));
-	booktransformComponent->Scale(XMVectorSet(8, 8, 8, 1.0f));
+	//Entity* bookEntity1 = ecsWorld->CreateEntity();
+	//bookEntity1->SetName("LittleBookcase");
+	//bookEntity1->AddComponent<MeshComponent>(Model(ASSETS_FOLDER + "Models/LittleBookcase/model.obj"));
+	//auto booktransformComponent = bookEntity1->AddComponent<TransformComponent>();
+	//booktransformComponent->Translate(XMVectorSet(10, 0, 0, 1.0f));
+	//booktransformComponent->Scale(XMVectorSet(8, 8, 8, 1.0f));
 
 	Entity* skyboxEntity = ecsWorld->CreateEntity();
 	std::string skyboxTextureName = ASSETS_FOLDER + TEXTURES_FOLDER + "YokotamaCitySkybox.dds";

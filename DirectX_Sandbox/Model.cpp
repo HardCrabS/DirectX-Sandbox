@@ -11,6 +11,12 @@ void logNodeHierarchy(aiNode* node);
 void LogMaterialInfo(const aiMaterial* material, unsigned int index);
 
 
+Model::Model(const std::string& filename)
+{
+	pathToModelFolder = std::filesystem::path(filename).parent_path();
+	LoadModel(filename);
+}
+
 void Model::LoadModel(const std::string& filename)
 {
 	Assimp::Importer importer;
@@ -18,8 +24,7 @@ void Model::LoadModel(const std::string& filename)
 		filename,
 		aiProcess_Triangulate |
 		aiProcess_FlipUVs |
-		aiProcess_CalcTangentSpace |
-		aiProcess_GenSmoothNormals);
+		aiProcess_CalcTangentSpace);
 
 	logInfo("[Model] ============= Loading model: " + filename);
 
@@ -67,6 +72,10 @@ MeshData Model::ProcessMesh(const aiMesh* mesh, const aiScene* scene)
 		aiVector3D normal = mesh->mNormals[i];
 		vertex.normal = XMFLOAT3(normal.x, normal.y, normal.z);
 
+		// Tangents
+		aiVector3D tangent = mesh->mTangents[i];
+		vertex.tangent = XMFLOAT3(tangent.x, tangent.y, tangent.z);
+
 		// Texture coordinates
 		if (mesh->mTextureCoords[0]) {
 			aiVector3D texCoord = mesh->mTextureCoords[0][i];
@@ -111,22 +120,32 @@ std::shared_ptr<Material> Model::ProcessMaterial(const aiMesh* mesh, const aiSce
 
 	if (aiMaterial->GetTextureCount(aiTextureType_DIFFUSE) > 0)
 	{
-		aiString path;
+		aiString textureName;
+		material = std::make_shared<SurfaceMaterial>();
+		SurfaceMaterial* matPtr = static_cast<SurfaceMaterial*>(material.get());
 
-		if (aiMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &path) == AI_SUCCESS)
+		if (aiMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &textureName) == AI_SUCCESS)
 		{
-			if (const aiTexture* texture = scene->GetEmbeddedTexture(path.C_Str()))
+			ID3D11ShaderResourceView* shaderResource;
+			if (const aiTexture* texture = scene->GetEmbeddedTexture(textureName.C_Str()))
 			{
-				logInfo("[Model] Found embedded texture: " + std::string(path.C_Str()));
-				auto shaderResource = resourceContainer->GetTexture(texture->mFilename.C_Str(), texture);
-				material = std::make_shared<SurfaceMaterial>(shaderResource);
+				logInfo("[Model] Found embedded texture: " + std::string(textureName.C_Str()));
+				shaderResource = resourceContainer->GetTexture(texture->mFilename.C_Str(), texture);
 			}
 			else
 			{
-				logInfo("[Model] Found diffuse texture: " + std::string(path.C_Str()));
-				auto shaderResource = resourceContainer->GetTexture(path.C_Str());
-				material = std::make_shared<SurfaceMaterial>(shaderResource);
+				std::filesystem::path pathToTexture = pathToModelFolder / textureName.C_Str();
+				logInfo("[Model] Found diffuse texture: " + pathToTexture.string());
+				shaderResource = resourceContainer->GetTexture(pathToTexture.string());
 			}
+			matPtr->SetDiffuse(shaderResource);
+		}
+		if (aiMaterial->GetTexture(aiTextureType_NORMALS, 0, &textureName) == AI_SUCCESS)
+		{
+			std::filesystem::path pathToTexture = pathToModelFolder / textureName.C_Str();
+			logInfo("[Model] Found normal texture: " + pathToTexture.string());
+			ID3D11ShaderResourceView* shaderResource = resourceContainer->GetTexture(pathToTexture.string());
+			matPtr->SetNormal(shaderResource);
 		}
 	}
 	else

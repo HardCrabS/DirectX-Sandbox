@@ -6,6 +6,7 @@
 #include <DirectXMath.h>
 #include <vector>
 #include <string>
+#include <filesystem>
 #include "Managers/Logger.h"
 #include "MeshData.h"
 #include "Materials/Material.h"
@@ -18,10 +19,11 @@ class Model
 {
 	std::vector<MeshData> meshData;
 	std::vector<std::shared_ptr<Material>> materials;
+	std::filesystem::path pathToModelFolder;
 
 public:
-	Model(const std::string& filename) { LoadModel(filename); }
-	Model(const std::vector<MeshData>& meshData, const std::vector<std::shared_ptr<Material>>& materials)
+	Model(const std::string& filename);
+	Model(std::vector<MeshData>& meshData, const std::vector<std::shared_ptr<Material>>& materials)
 	: meshData(std::move(meshData)), materials(materials) {}
 
 	const std::vector<MeshData>& GetMeshData() const { return meshData; }

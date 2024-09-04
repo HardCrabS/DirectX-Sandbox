@@ -30,8 +30,8 @@ LPCTSTR WndClassName = L"firstwindow";
 HWND hwnd = NULL;
 HRESULT hr;
 
-const int Width = 800;
-const int Height = 600;
+const int Width = 1024;
+const int Height = 768;
 Graphics* graphics = &Graphics::getInstance();
 GameWorld gameWorld;
 InputManager* inputManager = &InputManager::getInstance();
@@ -179,7 +179,7 @@ bool InitializeWindow(HINSTANCE hInstance,
         WndClassName,
         L"DirectX11 Sandbox",
         WS_OVERLAPPEDWINDOW,
-        CW_USEDEFAULT, CW_USEDEFAULT,
+        0, 0,
         rect.right - rect.left, rect.bottom - rect.top,
         NULL,
         NULL,
