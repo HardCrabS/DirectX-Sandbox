@@ -15,6 +15,7 @@ class InputManager
 
 public:
 	Event<int, int> OnLeftMouseButtonClick;
+	Event<int, int> OnRightMouseButtonClick;
 	Event<const unsigned char> OnKeyPressedEvent;
 
 private:
@@ -35,7 +36,10 @@ public:
 		leftIsDown = true; 
 		OnLeftMouseButtonClick.Notify(x, y);
 	}
-	void OnRightPressed(int x, int y) { rightIsDown = true; }
+	void OnRightPressed(int x, int y) { 
+		rightIsDown = true; 
+		OnRightMouseButtonClick.Notify(x, y);
+	}
 	void OnLeftReleased(int x, int y) { leftIsDown = false; }
 	void OnRightReleased(int x, int y) { rightIsDown = false; }
 	void OnMouseMove(int x, int y) { rawX = x - this->x; rawY = this->y - y; this->x = x; this->y = y; }
@@ -53,5 +57,7 @@ public:
 	bool IsRightDown() { return rightIsDown; }
 	int GetRawX() { return rawX; }
 	int GetRawY() { return rawY; }
+	int GetX() { return x; }
+	int GetY() { return y; }
 	int GetLastMouseWheelDirection() { return mouseWheelLastDirection; }
 };

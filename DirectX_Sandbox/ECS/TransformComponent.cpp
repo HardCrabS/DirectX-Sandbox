@@ -10,6 +10,7 @@ void TransformComponent::UpdateWorldMatrix()
 
 	forward = XMVector3TransformCoord(DEFAULT_FORWARD_VECTOR, rotationMatrix);
 	right = XMVector3TransformCoord(DEFAULT_RIGHT_VECTOR, rotationMatrix);
+	up = XMVector3TransformCoord(DEFAULT_UP_VECTOR, rotationMatrix);
 }
 
 TransformComponent::TransformComponent() :
@@ -53,5 +54,17 @@ void TransformComponent::Scale(const XMVECTOR& scaling)
 void TransformComponent::SetPosition(const XMVECTOR& pos)
 {
 	position = pos;
+	UpdateWorldMatrix();
+}
+
+void TransformComponent::SetRotation(const XMVECTOR& rot)
+{
+	rotation = rot;
+	UpdateWorldMatrix();
+}
+
+void TransformComponent::SetScale(const XMVECTOR& scl)
+{
+	scale = scl;
 	UpdateWorldMatrix();
 }

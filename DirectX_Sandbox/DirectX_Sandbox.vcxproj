@@ -227,7 +227,6 @@
     <ClCompile Include="Materials\SurfaceMaterial.cpp" />
     <ClCompile Include="MeshData.cpp" />
     <ClCompile Include="Model.cpp" />
-    <ClCompile Include="Picker.cpp" />
     <ClCompile Include="Raycast.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="Utils.cpp" />

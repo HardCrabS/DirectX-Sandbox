@@ -34,7 +34,7 @@ public:
 class ActiveCameraComponent : public Component<ActiveCameraComponent>
 {
 public:
-	CameraControlMode controlMode = CameraControlMode::Orbit;
+	CameraControlMode controlMode = CameraControlMode::Free;
 };
 
 class OrbitCameraComponent : public Component<OrbitCameraComponent>

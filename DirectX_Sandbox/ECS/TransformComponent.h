@@ -12,6 +12,7 @@ class TransformComponent : public Component<TransformComponent>
 	XMVECTOR scale;
 	XMMATRIX worldMatrix;
 	XMVECTOR forward;
+	XMVECTOR up;
 	XMVECTOR right;
 
 	const XMVECTOR DEFAULT_FORWARD_VECTOR = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
@@ -28,6 +29,8 @@ public:
 	void Scale(const XMVECTOR& scaling);
 
 	void SetPosition(const XMVECTOR& pos);
+	void SetRotation(const XMVECTOR& rot);
+	void SetScale(const XMVECTOR& scl);
 
 	XMVECTOR GetPosition() const { return position; }
 	XMVECTOR GetRotation() const { return rotation; }
@@ -38,5 +41,6 @@ public:
 	float GetRoll() const { return roll; }
 
 	XMVECTOR GetForward() const { return forward; }
+	XMVECTOR GetUp() const { return up; }
 	XMVECTOR GetRight() const { return right; }
 };

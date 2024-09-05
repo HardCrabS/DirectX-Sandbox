@@ -7,32 +7,44 @@
 
 void Picker::Initialize()
 {
-	InputManager::getInstance().OnLeftMouseButtonClick.Subscribe(std::bind(&Picker::Pick, this, std::placeholders::_1, std::placeholders::_2));
+	auto inputMgr = &InputManager::getInstance();
+	inputMgr->OnLeftMouseButtonClick.Subscribe(std::bind(&Picker::Pick, this, std::placeholders::_1, std::placeholders::_2));
+	inputMgr->OnRightMouseButtonClick.Subscribe(std::bind(&Picker::OnRMBClicked, this, std::placeholders::_1, std::placeholders::_2));
+	inputMgr->OnKeyPressedEvent.Subscribe(std::bind(&Picker::OnKeyPressed, this, std::placeholders::_1));
 
 	auto cameraEntity = ECSWorld::getInstance().FindEntityWithComponent<ActiveCameraComponent>();
 	assert(cameraEntity && "No entity with ActiveCameraComponent found!");
 	camera = cameraEntity->GetComponent<CameraComponent>();
+	cameraTransform = cameraEntity->GetComponent<TransformComponent>();
 }
 
 void Picker::Update()
 {
-	if (pickedEntity.entity != nullptr)
+	if (!pickedEntity.GetEntity())
+		return;
+	
+	switch (transformMode)
 	{
-		auto cameraTransform = ECSWorld::getInstance().GetEntity(camera->GetEntityID())->GetComponent<TransformComponent>();
-		auto entityTransform = pickedEntity.entity->GetComponent<TransformComponent>();
-
-		entityTransform->SetPosition(XMVectorAdd(
-			cameraTransform->GetPosition(), 
-			XMVectorScale(cameraTransform->GetForward(), pickedEntity.distanceFromCamera)
-		));
+	case TransformMode::Move:
+	{
+		ProcessMove();
+		break;
+	}
+	case TransformMode::Scale:
+	{
+		ProcessScale();
+		break;
+	}
 	}
 }
 
 void Picker::Pick(int x, int y)
 {
-	if (pickedEntity.entity) {
+	if (pickedEntity.GetEntity()) {
 		// drop whatever is already picked
-		pickedEntity.entity = nullptr;
+		transformMode = TransformMode::None;
+		transformAxis = TransformAxis::All;
+		pickedEntity.Deselect();
 		return;
 	}
 
@@ -64,16 +76,118 @@ void Picker::Pick(int x, int y)
 	{
 		auto hitEntity = ECSWorld::getInstance().GetEntity(hitData.entityID);
 		//logInfo("[Picker] Successfuly hit entity: " + hitEntity->GetName());
-		pickedEntity.entity = hitEntity;
-
-		auto entityTransform = hitEntity->GetComponent<TransformComponent>();
-		auto cameraTransform = ECSWorld::getInstance().GetEntity(camera->GetEntityID())->GetComponent<TransformComponent>();
-		float distanceFromCamera = XMVectorGetX(
-			XMVector3Length(XMVectorSubtract(entityTransform->GetPosition(), cameraTransform->GetPosition())));
-		pickedEntity.distanceFromCamera = distanceFromCamera;
+		pickedEntity.Select(hitEntity);
 	}
 	else
 	{
 		return;
 	}
+}
+
+void Picker::OnKeyPressed(const unsigned char key)
+{
+	if (!pickedEntity.GetEntity())
+		return;
+
+	if (transformMode != TransformMode::None)
+	{
+		if (key == 'X' || key == 'Y' || key == 'Z')
+			pickedEntity.Revert();
+
+		switch (key)
+		{
+		case 'X':
+		{
+			transformAxis = TransformAxis::X;
+			return;
+		}
+		case 'Y':
+		{
+			transformAxis = TransformAxis::Y;
+			return;
+		}
+		case 'Z':
+		{
+			transformAxis = TransformAxis::Z;
+			return;
+		}
+		}
+	}
+
+	auto inputMgr = &InputManager::getInstance();
+	mousePosInit = XMVectorSet(inputMgr->GetX(), inputMgr->GetY(), 0, 1);
+
+	switch (key)
+	{
+	case 'G':
+	{
+		transformMode = TransformMode::Move;
+		break;
+	}
+	case 'H':
+	{
+		transformMode = TransformMode::Scale;
+		break;
+	}
+	}
+}
+
+void Picker::OnRMBClicked(int x, int y)
+{
+	transformMode = TransformMode::None;
+	transformAxis = TransformAxis::All;
+	pickedEntity.Revert();
+}
+
+XMVECTOR Picker::GetAxisVector() const
+{
+	switch (transformAxis)
+	{
+	case TransformAxis::X:
+	{
+		return XMVectorSet(1, 0, 0, 0);
+	}
+	case TransformAxis::Y:
+	{
+		return XMVectorSet(0, 1, 0, 0);
+	}
+	case TransformAxis::Z:
+	{
+		return XMVectorSet(0, 0, 1, 0);
+	}
+	}
+	return XMVectorSet(1, 1, 1, 0);
+}
+
+void Picker::ProcessMove()
+{
+	auto inputMgr = &InputManager::getInstance();
+	float dx = inputMgr->GetRawX();
+	float dy = inputMgr->GetRawY();
+
+	XMVECTOR right = cameraTransform->GetRight();
+	XMVECTOR up = cameraTransform->GetUp();
+
+	XMVECTOR translation = XMVectorAdd(XMVectorScale(right, dx), XMVectorScale(up, dy));
+	translation = XMVectorMultiply(translation, GetAxisVector());
+
+	pickedEntity.GetEntity()->GetComponent<TransformComponent>()->Translate(translation);
+}
+
+void Picker::ProcessScale()
+{
+	auto inputMgr = &InputManager::getInstance();
+	XMVECTOR center = XMVectorSet(width / 2.f, height / 2.f, 0, 1);
+	XMVECTOR currMousePos = XMVectorSet(inputMgr->GetX(), inputMgr->GetY(), 0, 1);
+
+	XMVECTOR initDistance = XMVector2Length(XMVectorSubtract(mousePosInit, center));
+	XMVECTOR currDistance = XMVector2Length(XMVectorSubtract(currMousePos, center));
+	XMVECTOR scaleFactor = XMVectorDivide(currDistance, initDistance);
+	XMVECTOR resultingScale = XMVectorMultiply(scaleFactor, pickedEntity.GetInitScale());
+	auto axisVec = GetAxisVector();
+	resultingScale = XMVectorSelect(pickedEntity.GetInitScale(), resultingScale, XMVectorSelectControl(
+		XMVectorGetX(axisVec), XMVectorGetY(axisVec), XMVectorGetZ(axisVec), 0)
+	);
+
+	pickedEntity.GetEntity()->GetComponent<TransformComponent>()->SetScale(resultingScale);
 }
