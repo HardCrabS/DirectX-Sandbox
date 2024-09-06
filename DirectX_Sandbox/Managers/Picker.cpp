@@ -30,6 +30,11 @@ void Picker::Update()
 		ProcessMove();
 		break;
 	}
+	case TransformMode::Rotate:
+	{
+		ProcessRotate();
+		break;
+	}
 	case TransformMode::Scale:
 	{
 		ProcessScale();
@@ -124,6 +129,12 @@ void Picker::OnKeyPressed(const unsigned char key)
 		transformMode = TransformMode::Move;
 		break;
 	}
+	case 'R':
+	{
+		transformMode = TransformMode::Rotate;
+		transformAxis = TransformAxis::X;
+		break;
+	}
 	case 'H':
 	{
 		transformMode = TransformMode::Scale;
@@ -172,6 +183,16 @@ void Picker::ProcessMove()
 	translation = XMVectorMultiply(translation, GetAxisVector());
 
 	pickedEntity.GetEntity()->GetComponent<TransformComponent>()->Translate(translation);
+}
+
+void Picker::ProcessRotate()
+{
+	auto inputMgr = &InputManager::getInstance();
+	float dx = inputMgr->GetRawX();
+	XMVECTOR rotation = XMVectorScale(GetAxisVector(), dx * 0.1f);
+
+	pickedEntity.GetEntity()->GetComponent<TransformComponent>()->Rotate(
+		XMVectorGetY(rotation), XMVectorGetX(rotation), XMVectorGetZ(rotation));
 }
 
 void Picker::ProcessScale()

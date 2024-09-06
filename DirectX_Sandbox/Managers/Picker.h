@@ -77,5 +77,6 @@ private:
 
 	XMVECTOR GetAxisVector() const;
 	void ProcessMove();
+	void ProcessRotate();
 	void ProcessScale();
 };
