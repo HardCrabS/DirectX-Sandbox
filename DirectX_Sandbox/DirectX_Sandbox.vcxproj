@@ -184,6 +184,7 @@
     <ClInclude Include="Managers\Logger.h" />
     <ClInclude Include="Managers\Picker.h" />
     <ClInclude Include="Managers\ResourcesContainer.h" />
+    <ClInclude Include="Managers\SceneSaveLoad.h" />
     <ClInclude Include="Managers\Singleton.h" />
     <ClInclude Include="Materials\Material.h" />
     <ClInclude Include="Materials\SkyboxMaterial.h" />
@@ -221,6 +222,7 @@
     <ClCompile Include="Managers\Logger.cpp" />
     <ClCompile Include="Managers\Picker.cpp" />
     <ClCompile Include="Managers\ResourcesContainer.cpp" />
+    <ClCompile Include="Managers\SceneSaveLoad.cpp" />
     <ClCompile Include="Materials\Material.cpp" />
     <ClCompile Include="Materials\SkyboxMaterial.cpp" />
     <ClCompile Include="Materials\SolidMaterial.cpp" />

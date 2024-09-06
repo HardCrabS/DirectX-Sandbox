@@ -13,6 +13,7 @@ void LogMaterialInfo(const aiMaterial* material, unsigned int index);
 
 Model::Model(const std::string& filename)
 {
+	modelFilename = filename;
 	pathToModelFolder = std::filesystem::path(filename).parent_path();
 	LoadModel(filename);
 }
@@ -24,7 +25,9 @@ void Model::LoadModel(const std::string& filename)
 		filename,
 		aiProcess_Triangulate |
 		aiProcess_FlipUVs |
-		aiProcess_CalcTangentSpace);
+		aiProcess_CalcTangentSpace |
+		aiProcess_GenSmoothNormals
+	);
 
 	logInfo("[Model] ============= Loading model: " + filename);
 
@@ -73,8 +76,10 @@ MeshData Model::ProcessMesh(const aiMesh* mesh, const aiScene* scene)
 		vertex.normal = XMFLOAT3(normal.x, normal.y, normal.z);
 
 		// Tangents
-		aiVector3D tangent = mesh->mTangents[i];
-		vertex.tangent = XMFLOAT3(tangent.x, tangent.y, tangent.z);
+		if (mesh->mTangents) {
+			aiVector3D tangent = mesh->mTangents[i];
+			vertex.tangent = XMFLOAT3(tangent.x, tangent.y, tangent.z);
+		}
 
 		// Texture coordinates
 		if (mesh->mTextureCoords[0]) {

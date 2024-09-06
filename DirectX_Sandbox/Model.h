@@ -20,6 +20,7 @@ class Model
 	std::vector<MeshData> meshData;
 	std::vector<std::shared_ptr<Material>> materials;
 	std::filesystem::path pathToModelFolder;
+	std::string modelFilename;
 
 public:
 	Model(const std::string& filename);
@@ -37,6 +38,7 @@ public:
 		}
 		return materials[index];
 	}
+	const std::string& GetFilename() const { return modelFilename; }
 private:
 	void LoadModel(const std::string& filename);
 	void ProcessNode(aiNode* node, const aiScene* scene);

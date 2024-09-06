@@ -44,6 +44,7 @@ public:
 	template<class T>
 	std::vector<T*> FindAllComponentsOfType() const;
 	Entity* FindEntityByName(const std::string& name);
+	const std::unordered_map<int, std::unique_ptr<Entity>>& GetEntities() const { return m_entities; }
 };
 
 template<class T>

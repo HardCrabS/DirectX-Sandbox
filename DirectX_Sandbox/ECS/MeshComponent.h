@@ -19,7 +19,7 @@ class MeshComponent : public Component<MeshComponent>
 public:
 	bool isExcludedFromRaycast = false;
 public:
-	MeshComponent(const Model& model);
+	MeshComponent(Model&& model);
 	~MeshComponent();
 
 	const Model& GetModel() const { return model; }

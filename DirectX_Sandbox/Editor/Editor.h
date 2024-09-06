@@ -1,4 +1,5 @@
 #include "AssetBrowserEditor.h"
+#include "Managers/SceneSaveLoad.h"
 
 class Editor
 {
