@@ -189,7 +189,7 @@ void Picker::ProcessRotate()
 {
 	auto inputMgr = &InputManager::getInstance();
 	float dx = inputMgr->GetRawX();
-	XMVECTOR rotation = XMVectorScale(GetAxisVector(), dx * 0.1f);
+	XMVECTOR rotation = XMVectorScale(GetAxisVector(), dx * 0.01f);
 
 	pickedEntity.GetEntity()->GetComponent<TransformComponent>()->Rotate(
 		XMVectorGetY(rotation), XMVectorGetX(rotation), XMVectorGetZ(rotation));

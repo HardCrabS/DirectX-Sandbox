@@ -14,7 +14,7 @@ cbuffer PS_lightsBuffer : register(b0)
 
 float3 CalculateLight(DirectionalLight directionalLight, float3 normal)
 {
-    float AMBIENT_STRENGTH = 0.1;
+    float AMBIENT_STRENGTH = 0.3f;
 
     float3 ambient = AMBIENT_STRENGTH;
     

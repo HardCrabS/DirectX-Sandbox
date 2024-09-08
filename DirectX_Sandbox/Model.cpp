@@ -8,7 +8,7 @@
 
 
 void logNodeHierarchy(aiNode* node);
-void LogMaterialInfo(const aiMaterial* material, unsigned int index);
+void logMaterialInfo(const aiMaterial* material, unsigned int index);
 
 
 Model::Model(const std::string& filename)
@@ -26,7 +26,7 @@ void Model::LoadModel(const std::string& filename)
 		aiProcess_Triangulate |
 		aiProcess_FlipUVs |
 		aiProcess_CalcTangentSpace |
-		aiProcess_GenSmoothNormals
+		aiProcess_GenNormals
 	);
 
 	logInfo("[Model] ============= Loading model: " + filename);
@@ -64,6 +64,11 @@ MeshData Model::ProcessMesh(const aiMesh* mesh, const aiScene* scene)
 {
 	std::vector<Vertex> vertices;
 	std::vector<DWORD> indices;
+
+	if (!mesh->mTextureCoords[0])
+		logInfo("[Model] No tex coords found!");
+	if (!mesh->mTangents)
+		logInfo("[Model] No tex tangents found!");
 
 	for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
 		Vertex vertex;
@@ -121,14 +126,11 @@ std::shared_ptr<Material> Model::ProcessMaterial(const aiMesh* mesh, const aiSce
 	LogMaterialInfo(aiMaterial, mesh->mMaterialIndex);
 #endif
 
-	std::shared_ptr<Material> material;
+	std::shared_ptr<SurfaceMaterial> material = std::make_shared<SurfaceMaterial>();
 
 	if (aiMaterial->GetTextureCount(aiTextureType_DIFFUSE) > 0)
 	{
 		aiString textureName;
-		material = std::make_shared<SurfaceMaterial>();
-		SurfaceMaterial* matPtr = static_cast<SurfaceMaterial*>(material.get());
-
 		if (aiMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &textureName) == AI_SUCCESS)
 		{
 			ID3D11ShaderResourceView* shaderResource;
@@ -143,29 +145,45 @@ std::shared_ptr<Material> Model::ProcessMaterial(const aiMesh* mesh, const aiSce
 				logInfo("[Model] Found diffuse texture: " + pathToTexture.string());
 				shaderResource = resourceContainer->GetTexture(pathToTexture.string());
 			}
-			matPtr->SetDiffuse(shaderResource);
-		}
-		if (aiMaterial->GetTexture(aiTextureType_NORMALS, 0, &textureName) == AI_SUCCESS)
-		{
-			std::filesystem::path pathToTexture = pathToModelFolder / textureName.C_Str();
-			logInfo("[Model] Found normal texture: " + pathToTexture.string());
-			ID3D11ShaderResourceView* shaderResource = resourceContainer->GetTexture(pathToTexture.string());
-			matPtr->SetNormal(shaderResource);
+			material->SetDiffuse(shaderResource);
 		}
 	}
 	else
 	{
-		aiColor4D color;
-		if (aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_DIFFUSE, &color) == AI_SUCCESS)
+		ID3D11ShaderResourceView* shaderResource = resourceContainer->GetTexture(DEFAULT_DIFFUSE_TEXTURE);
+		material->SetDiffuse(shaderResource);
+	}
+
+	aiColor4D color;
+	if (aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_DIFFUSE, &color) == AI_SUCCESS)
+	{
+		material->SetColor(XMFLOAT4(color.r, color.g, color.b, color.a));
+	}
+
+	if (aiMaterial->GetTextureCount(aiTextureType_NORMALS) > 0)
+	{
+		aiString textureName;
+		if (aiMaterial->GetTexture(aiTextureType_NORMALS, 0, &textureName) == AI_SUCCESS)
 		{
-			material = std::make_shared<SolidMaterial>(XMFLOAT4(color.r, color.g, color.b, color.a));
+			ID3D11ShaderResourceView* shaderResource;
+			if (const aiTexture* texture = scene->GetEmbeddedTexture(textureName.C_Str()))
+			{
+				logInfo("[Model] Found embedded normal texture: " + std::string(textureName.C_Str()));
+				shaderResource = resourceContainer->GetTexture(texture->mFilename.C_Str(), texture);
+			}
+			else
+			{
+				std::filesystem::path pathToTexture = pathToModelFolder / textureName.C_Str();
+				logInfo("[Model] Found normal texture: " + pathToTexture.string());
+				shaderResource = resourceContainer->GetTexture(pathToTexture.string());
+			}
+			material->SetNormal(shaderResource);
 		}
-		else
-		{
-			logError("[Model] No textures were found! Pink color returned.");
-			LogMaterialInfo(aiMaterial, mesh->mMaterialIndex);
-			material = std::make_shared<SolidMaterial>(XMFLOAT4(1, 0.8f, 0.85f, 1));
-		}
+	}
+	else
+	{
+		ID3D11ShaderResourceView* shaderResource = resourceContainer->GetTexture(DEFAULT_NORMAL_MAP);
+		material->SetNormal(shaderResource);
 	}
 
 	resourceContainer->RegisterMaterial(matKey, material);
@@ -184,7 +202,7 @@ void logNodeHierarchy(aiNode* node)
 	}
 }
 
-void LogMaterialInfo(const aiMaterial* material, unsigned int index)
+void logMaterialInfo(const aiMaterial* material, unsigned int index)
 {
 	logInfo("*******************************LogMaterialInfo************************************");
 	std::ostringstream oss;
