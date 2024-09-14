@@ -12,7 +12,6 @@
 
 // specific systems =============
 #include "ECS/CameraSystem.h"
-#include "ECS/RenderSystem.h"
 //===============================
 
 

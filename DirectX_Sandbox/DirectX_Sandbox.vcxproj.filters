@@ -141,9 +141,6 @@
     <ClInclude Include="ECS\MeshComponent.h">
       <Filter>Header Files\ECS_Gameplay</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\RenderSystem.h">
-      <Filter>Header Files\ECS_Gameplay</Filter>
-    </ClInclude>
     <ClInclude Include="ECS\TransformComponent.h">
       <Filter>Header Files\ECS_Gameplay</Filter>
     </ClInclude>
@@ -183,6 +180,12 @@
     <ClInclude Include="Materials\SurfaceMaterial.h">
       <Filter>Header Files\Materials</Filter>
     </ClInclude>
+    <ClInclude Include="Managers\SceneSaveLoad.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Managers\RenderManager.h">
+      <Filter>Header Files\Singletons</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -218,9 +221,6 @@
     <ClCompile Include="..\ThirdParty\ImGui\imgui.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Picker.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Raycast.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -243,9 +243,6 @@
       <Filter>Source Files\ECS_Gameplay</Filter>
     </ClCompile>
     <ClCompile Include="ECS\MeshComponent.cpp">
-      <Filter>Source Files\ECS_Gameplay</Filter>
-    </ClCompile>
-    <ClCompile Include="ECS\RenderSystem.cpp">
       <Filter>Source Files\ECS_Gameplay</Filter>
     </ClCompile>
     <ClCompile Include="ECS\TransformComponent.cpp">
@@ -283,6 +280,12 @@
     </ClCompile>
     <ClCompile Include="Materials\SurfaceMaterial.cpp">
       <Filter>Source Files\Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="Managers\SceneSaveLoad.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Managers\RenderManager.cpp">
+      <Filter>Source Files\Singletons</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

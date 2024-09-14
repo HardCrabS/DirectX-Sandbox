@@ -14,6 +14,7 @@
 #include <chrono>
 #include "Managers/Graphics.h"
 #include "Managers/GameWorld.h"
+#include "Managers/RenderManager.h"
 #include "Managers/InputManager.h"
 #include "Managers/Logger.h"
 #include "Managers/Picker.h"
@@ -34,6 +35,7 @@ const int Width = 1024;
 const int Height = 768;
 Graphics* graphics = &Graphics::getInstance();
 GameWorld gameWorld;
+RenderManager* renderManager = &RenderManager::getInstance();
 InputManager* inputManager = &InputManager::getInstance();
 Picker picker(Width, Height);
 Editor editor;
@@ -66,6 +68,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
     graphics->Init(Width, Height, hInstance, hwnd);
     gameWorld.Initialize();
+    renderManager->Initialize();
 
     picker.Initialize();
 
@@ -122,6 +125,8 @@ void Update()
 
     gameWorld.Update();
     picker.Update();
+
+    renderManager->Render();
 
     ImGui::Render();
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());

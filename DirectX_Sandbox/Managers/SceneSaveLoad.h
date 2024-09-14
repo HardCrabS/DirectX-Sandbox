@@ -1,6 +1,7 @@
 #include "Singleton.h"
 #include "ECSWorld.h"
 #include "ECS/Entity.h"
+#include "ECS/MeshComponent.h"
 #include <vector>
 #include <fstream>
 #include <iostream>

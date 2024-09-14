@@ -168,7 +168,6 @@
     <ClInclude Include="ECS\Entity.h" />
     <ClInclude Include="ECS\IComponent.h" />
     <ClInclude Include="ECS\MeshComponent.h" />
-    <ClInclude Include="ECS\RenderSystem.h" />
     <ClInclude Include="ECS\System.h" />
     <ClInclude Include="ECS\TransformComponent.h" />
     <ClInclude Include="Editor\AssetBrowserEditor.h" />
@@ -183,6 +182,7 @@
     <ClInclude Include="Managers\InputManager.h" />
     <ClInclude Include="Managers\Logger.h" />
     <ClInclude Include="Managers\Picker.h" />
+    <ClInclude Include="Managers\RenderManager.h" />
     <ClInclude Include="Managers\ResourcesContainer.h" />
     <ClInclude Include="Managers\SceneSaveLoad.h" />
     <ClInclude Include="Managers\Singleton.h" />
@@ -210,7 +210,6 @@
     <ClCompile Include="ECS\Component.cpp" />
     <ClCompile Include="ECS\Entity.cpp" />
     <ClCompile Include="ECS\MeshComponent.cpp" />
-    <ClCompile Include="ECS\RenderSystem.cpp" />
     <ClCompile Include="ECS\System.cpp" />
     <ClCompile Include="ECS\TransformComponent.cpp" />
     <ClCompile Include="Editor\AssetBrowserEditor.cpp" />
@@ -221,6 +220,7 @@
     <ClCompile Include="Managers\InputManager.cpp" />
     <ClCompile Include="Managers\Logger.cpp" />
     <ClCompile Include="Managers\Picker.cpp" />
+    <ClCompile Include="Managers\RenderManager.cpp" />
     <ClCompile Include="Managers\ResourcesContainer.cpp" />
     <ClCompile Include="Managers\SceneSaveLoad.cpp" />
     <ClCompile Include="Materials\Material.cpp" />

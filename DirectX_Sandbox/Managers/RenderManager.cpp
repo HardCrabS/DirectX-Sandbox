@@ -1,26 +1,28 @@
-#include "ECS/RenderSystem.h"
+#include "RenderManager.h"
 
-void RenderSystem::Initialize()
-{
-
-}
-
-bool RenderSystem::IsEntityHasRequiredComponents(const Entity* entity) const
-{
-    return entity->HasComponents(TransformComponent::TypeID(), MeshComponent::TypeID());
-}
-
-void RenderSystem::UpdateEntity(Entity* entity)
+void RenderManager::Initialize()
 {
     auto ecsWorld = &ECSWorld::getInstance();
+    auto cameraEntity = ecsWorld->FindEntityWithComponent<ActiveCameraComponent>();
+    assert(cameraEntity && "No entity with ActiveCameraComponent found!");
+    cameraToRenderFrom = cameraEntity->GetComponent<CameraComponent>();
+}
 
-    if (cameraToRenderFrom == nullptr)
-    {
-        auto cameraEntity = ecsWorld->FindEntityWithComponent<ActiveCameraComponent>();
-        assert(cameraEntity && "No entity with ActiveCameraComponent found!");
-        cameraToRenderFrom = cameraEntity->GetComponent<CameraComponent>();
+void RenderManager::Render()
+{
+    const auto& entities = ECSWorld::getInstance().GetEntities();
+
+    for (const auto& it : entities) {
+        auto& e = it.second;
+        if (!e->HasComponents(MeshComponent::TypeID()))
+            continue;
+
+        RenderEntity(e.get());
     }
+}
 
+void RenderManager::RenderEntity(Entity* entity)
+{
     TransformComponent* transformComponent = entity->GetComponent<TransformComponent>();
     MeshComponent* meshComponent = entity->GetComponent<MeshComponent>();
 
@@ -33,7 +35,7 @@ void RenderSystem::UpdateEntity(Entity* entity)
         std::shared_ptr<Material> material = meshComponent->GetModel().GetMaterial(subMeshData->GetMaterialIndex());
         UpdateMaterial(material, transformComponent);
         UpdateMaterialLights(material);
-        
+
         devcon->IASetIndexBuffer(meshComponent->GetIndexBuffer(i), DXGI_FORMAT_R32_UINT, 0);
 
         // TODO: store vertices in a single buffer and make proper indexation
@@ -48,7 +50,7 @@ void RenderSystem::UpdateEntity(Entity* entity)
     }
 }
 
-void RenderSystem::UpdateMaterial(const std::shared_ptr<Material>& material, TransformComponent* transform) const
+void RenderManager::UpdateMaterial(const std::shared_ptr<Material>& material, TransformComponent* transform) const
 {
     auto devcon = Graphics::getInstance().GetDeviceContext();
 
@@ -62,7 +64,7 @@ void RenderSystem::UpdateMaterial(const std::shared_ptr<Material>& material, Tra
         cameraToRenderFrom->projectionMatrix);
 }
 
-void RenderSystem::UpdateMaterialLights(const std::shared_ptr<Material>& material) const
+void RenderManager::UpdateMaterialLights(const std::shared_ptr<Material>& material) const
 {
     auto ecsWorld = &ECSWorld::getInstance();
     auto directLights = ecsWorld->FindAllComponentsOfType<DirectionalLightComponent>();

@@ -4,7 +4,6 @@
 void ECSWorld::Initialize()
 {
     m_systems.push_back(std::move(std::make_unique<CameraSystem>()));
-    m_systems.push_back(std::move(std::make_unique<RenderSystem>()));
 
     for (auto& system : m_systems) {
         system->Initialize();
