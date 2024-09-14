@@ -94,6 +94,15 @@ void Picker::OnKeyPressed(const unsigned char key)
 	if (!pickedEntity.GetEntity())
 		return;
 
+	// delete key
+	if (key == 0x2E)
+	{
+		Entity* entity = pickedEntity.GetEntity();
+		pickedEntity.Deselect();
+		ECSWorld::getInstance().DestroyEntity(entity->GetID());
+		return;
+	}
+
 	if (transformMode != TransformMode::None)
 	{
 		if (key == 'X' || key == 'Y' || key == 'Z')
