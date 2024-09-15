@@ -7,7 +7,6 @@
 #include <vector>
 #include "ResourcesContainer.h"
 #include "Vertex.h"
-#include "Materials/Material.h"
 
 using namespace DirectX;
 
@@ -37,6 +36,7 @@ public:
 	void operator=(const Graphics&) = delete;
 
 	void Init(int width, int height, HINSTANCE hInstance, HWND hwnd);
+	void SetDefaultRenderTarget();
 	void CleanUp();
 	void ClearScreen();
 	void Present();

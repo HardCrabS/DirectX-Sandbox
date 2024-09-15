@@ -25,7 +25,8 @@ public:
 
 	template<class T, class ...ARGS>
 	T* AddComponent(ARGS&&... componentArgs);
-	void RemoveComponent(int componentTypeID);
+	template<class T>
+	void RemoveComponent();
 	template<class ...ARGS>
 	bool HasComponents(ARGS&&... componentIDs) const;
 	template<class T>
@@ -63,4 +64,11 @@ T* Entity::GetComponent() const
 {
 	assert(HasComponents(T::TypeID()) && "No such component on entity!");
 	return static_cast<T*>(m_components[T::TypeID()].get());
+}
+
+template<class T>
+void Entity::RemoveComponent()
+{
+	assert(HasComponents(T::TypeID()) && "No such component on entity!");
+	m_componentMask &= ~(1 << T::TypeID());
 }

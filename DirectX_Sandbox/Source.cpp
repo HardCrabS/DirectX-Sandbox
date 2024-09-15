@@ -18,6 +18,7 @@
 #include "Managers/InputManager.h"
 #include "Managers/Logger.h"
 #include "Managers/Picker.h"
+#include "Managers/EdgeDrawer.h"
 #include "Editor/Editor.h"
 
 #include "imgui.h"
@@ -39,6 +40,7 @@ RenderManager* renderManager = &RenderManager::getInstance();
 InputManager* inputManager = &InputManager::getInstance();
 Picker picker(Width, Height);
 Editor editor;
+EdgeDrawer edgeDrawer;
 
 std::chrono::high_resolution_clock::time_point lastFrameTime;
 float deltaTime = 0.0f;
@@ -69,6 +71,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
     graphics->Init(Width, Height, hInstance, hwnd);
     gameWorld.Initialize();
     renderManager->Initialize();
+    edgeDrawer.Initialize();
 
     picker.Initialize();
 
@@ -130,6 +133,9 @@ void Update()
 
     ImGui::Render();
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
+    // post processing
+    edgeDrawer.Render();
 
     graphics->Present();
     inputManager->ClearDelta();

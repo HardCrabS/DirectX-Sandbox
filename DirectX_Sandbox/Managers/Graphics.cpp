@@ -62,24 +62,27 @@ void Graphics::Init(int width, int height, HINSTANCE hInstance, HWND hwnd)
 	d3d11Device->CreateTexture2D(&depthStencilDesc, NULL, &depthStencilBuffer);
 	d3d11Device->CreateDepthStencilView(depthStencilBuffer, NULL, &depthStencilView);
 
-	// set the render target
+	SetDefaultRenderTarget();
+
+	resourcesContainer.Initialize(d3d11Device, d3d11DevCon);
+}
+
+void Graphics::SetDefaultRenderTarget()
+{
 	d3d11DevCon->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
 
-	//Create the Viewport
+	// Set the Viewport
 	D3D11_VIEWPORT viewport;
 	ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
 
+	viewport.Width = (float)Width;
+	viewport.Height = (float)Height;
 	viewport.TopLeftX = 0;
 	viewport.TopLeftY = 0;
-	viewport.Width = Width;
-	viewport.Height = Height;
 	viewport.MinDepth = 0.0f;
 	viewport.MaxDepth = 1.0f;
 
-	//Set the Viewport
 	d3d11DevCon->RSSetViewports(1, &viewport);
-
-	resourcesContainer.Initialize(d3d11Device, d3d11DevCon);
 }
 
 void Graphics::CleanUp()

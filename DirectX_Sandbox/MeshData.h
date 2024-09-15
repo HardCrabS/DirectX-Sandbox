@@ -3,11 +3,13 @@
 #include <string>
 #include <d3d11.h>
 #include "Vertex.h"
+#include "Managers/Graphics.h"
 
 enum PrimitiveType
 {
 	Cube,
 	Sphere,
+	ScreenQuad,
 };
 class Primitive;
 
@@ -36,6 +38,16 @@ public:
 	unsigned int GetMaterialIndex() const { return materialIndex; }
 };
 
+class CustomMesh
+{
+public:
+	ID3D11Buffer* pVertexBuffer = nullptr;
+	ID3D11Buffer* pIndexBuffer = nullptr;
+	MeshData meshData;
+
+	CustomMesh(const MeshData& meshData);
+};
+
 class Primitive
 {
 public:
@@ -48,6 +60,13 @@ class CubePrimitive : public Primitive
 	bool inverseTriangles = false;
 public:
 	CubePrimitive(bool invertTriangles=false) : inverseTriangles(inverseTriangles) {}
+	std::vector<Vertex> GetVertices() override;
+	std::vector<DWORD> GetIndices() override;
+};
+
+class ScreenSpaceQuad : public Primitive
+{
+public:
 	std::vector<Vertex> GetVertices() override;
 	std::vector<DWORD> GetIndices() override;
 };

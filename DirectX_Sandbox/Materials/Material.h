@@ -5,6 +5,7 @@
 #include <DirectXMath.h>
 #include <DirectXTex.h>
 #include "Managers/Logger.h"
+//#include "Managers/Graphics.h"
 #include "Utils.h"
 
 inline const int MAX_NUM_OF_DIRECTIONAL_LIGHTS = 3;
@@ -45,6 +46,7 @@ protected:
 	ID3D11InputLayout* vertLayout;
 	std::vector<D3D11_INPUT_ELEMENT_DESC> layout;
 	D3D_PRIMITIVE_TOPOLOGY topology;
+	ID3D11SamplerState* defaultTextureSampler;
 
 	// constant buffers
 	ID3D11Buffer* vertexCbBuffer;
@@ -60,7 +62,7 @@ protected:
 
 public:
 	Material(LPCWSTR vsFilename, LPCSTR vsName, LPCWSTR psFilename, LPCSTR psName);
-	~Material() { logInfo("Material destroyed: " + Utils::ConvertLPCWSTRToString(vsFilename)); }
+	~Material() { logInfo("[Material] Material destroyed: " + Utils::ConvertLPCWSTRToString(vsFilename)); }
 	virtual void UpdateResources(DirectX::XMMATRIX worldMatrix, DirectX::XMMATRIX viewMatrix,
 		DirectX::XMMATRIX projectionMatrix);
 	virtual void UpdateLights(const std::vector<DirectionalLight>& dirLights);
@@ -69,6 +71,7 @@ public:
 	void SetDeviceAndDevcon(ID3D11Device* device, ID3D11DeviceContext* devcon) { 
 		this->device = device; this->devcon = devcon; 
 	}
+	void SetTexture(ID3D11ShaderResourceView* texture);
 
 	ID3D11VertexShader* GetVS() const { return VS; }
 	ID3D11PixelShader* GetPS() const { return PS; }
@@ -79,6 +82,7 @@ protected:
 	virtual void CreateShaders();
 	virtual void CreateBuffers();
 	virtual void CleanUp();
+	ID3D11SamplerState* GetDefaultTextureSampler();
 private:
 	void CreateInputLayout();
 };

@@ -3,7 +3,7 @@
 
 Material::Material(LPCWSTR vsFilename, LPCSTR vsName, LPCWSTR psFilename, LPCSTR psName)
 	: vsFilename(vsFilename), vsName(vsName), psFilename(psFilename), psName(psName),
-	topology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST)
+	topology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST), defaultTextureSampler(nullptr)
 {
 	logInfo("Created material for shader: " + Utils::ConvertLPCWSTRToString(vsFilename));
 }
@@ -13,6 +13,13 @@ void Material::Initialize()
 	CreateShaders();
 	CreateInputLayout();
 	CreateBuffers();
+}
+
+void Material::SetTexture(ID3D11ShaderResourceView* texture)
+{
+	devcon->PSSetShaderResources(0, 1, &texture);
+	auto sampler = GetDefaultTextureSampler();
+	devcon->PSSetSamplers(0, 1, &sampler);
 }
 
 void Material::UpdateResources(DirectX::XMMATRIX worldMatrix, DirectX::XMMATRIX viewMatrix,
@@ -113,4 +120,26 @@ void Material::CleanUp()
 	vertLayout->Release();
 	vertexCbBuffer->Release();
 	lightCbBuffer->Release();
+	if (defaultTextureSampler)
+		defaultTextureSampler->Release();
+}
+
+ID3D11SamplerState* Material::GetDefaultTextureSampler()
+{
+	if (defaultTextureSampler == nullptr)
+	{
+		D3D11_SAMPLER_DESC sampDesc;
+		ZeroMemory(&sampDesc, sizeof(sampDesc));
+		sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+		sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+		sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+		sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+		sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+		sampDesc.MinLOD = 0;
+		sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+		HRESULT hr = device->CreateSamplerState(&sampDesc, &defaultTextureSampler);
+		assert(SUCCEEDED(hr));
+	}
+
+	return defaultTextureSampler;
 }

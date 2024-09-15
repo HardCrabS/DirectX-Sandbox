@@ -9,10 +9,8 @@ void SurfaceMaterial::UpdateResources(DirectX::XMMATRIX worldMatrix, DirectX::XM
 {
 	Material::UpdateResources(worldMatrix, viewMatrix, projectionMatrix);
 
-	if (diffuseTexture != nullptr)
-		devcon->PSSetShaderResources(0, 1, &diffuseTexture);
-	if (normalTexture != nullptr)
-		devcon->PSSetShaderResources(1, 1, &normalTexture);
+	devcon->PSSetShaderResources(0, 1, &diffuseTexture);
+	devcon->PSSetShaderResources(1, 1, &normalTexture);
 	devcon->PSSetSamplers(0, 1, &samplerLinear);
 
 	devcon->UpdateSubresource(colorCbBuffer, 0, nullptr, &colorCB, 0, 0);

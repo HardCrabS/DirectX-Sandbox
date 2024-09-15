@@ -28,3 +28,8 @@ public:
 private:
 	void ProcessSubMesh(const MeshData& meshData, int index);
 };
+
+class DrawEdgeFlag : public Component<DrawEdgeFlag>
+{
+
+};

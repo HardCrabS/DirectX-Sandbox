@@ -12,6 +12,11 @@ void MeshData::CreatePrimitive(PrimitiveType primitiveType, bool invert)
 		primitiveMesh = std::make_unique<CubePrimitive>(invert);
 		break;
 	}
+	case PrimitiveType::ScreenQuad:
+	{
+		primitiveMesh = std::make_unique<ScreenSpaceQuad>();
+		break;
+	}
 	}
 	auto primitiveVertices = primitiveMesh->GetVertices();
 	auto primitiveIndices = primitiveMesh->GetIndices();
@@ -97,4 +102,65 @@ std::vector<DWORD> CubePrimitive::GetIndices()
 		22,21,20,
 		23,22,20
 	};
+}
+
+std::vector<Vertex> ScreenSpaceQuad::GetVertices()
+{
+	return {
+		Vertex(-1.0f, -1.0f, 0.0f, 0.0f, 1.0f), // Bottom-left
+		Vertex(-1.0f,  1.0f, 0.0f, 0.0f, 0.0f), // Top-left
+		Vertex(1.0f,  1.0f, 0.0f, 1.0f, 0.0f), // Top-right
+		Vertex(-1.0f, -1.0f, 0.0f, 0.0f, 1.0f), // Bottom-left
+		Vertex(1.0f,  1.0f, 0.0f, 1.0f, 0.0f), // Top-right
+		Vertex(1.0f, -1.0f, 0.0f, 1.0f, 1.0f)  // Bottom-right
+	};
+}
+
+std::vector<DWORD> ScreenSpaceQuad::GetIndices()
+{
+	return std::vector<DWORD>();
+}
+
+CustomMesh::CustomMesh(const MeshData& meshData)
+{
+	this->meshData = meshData;
+
+	auto vertices = meshData.GetVertices();
+	auto indices = meshData.GetIndices();
+
+	ID3D11Device* device = Graphics::getInstance().GetDevice();
+
+	if (!indices.empty())
+	{
+		// index buffer
+		D3D11_BUFFER_DESC ibd;
+		ZeroMemory(&ibd, sizeof(ibd));
+
+		ibd.Usage = D3D11_USAGE_DEFAULT;
+		ibd.ByteWidth = sizeof(DWORD) * meshData.GetNumOfIndices();
+		ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+		ibd.CPUAccessFlags = 0;
+
+		D3D11_SUBRESOURCE_DATA iinitData;
+		iinitData.pSysMem = &indices[0];
+
+		HRESULT hr = device->CreateBuffer(&ibd, &iinitData, &pIndexBuffer);
+		assert(SUCCEEDED(hr));
+	}
+
+	// vertex buffer
+	D3D11_BUFFER_DESC bd;
+	ZeroMemory(&bd, sizeof(bd));
+
+	bd.Usage = D3D11_USAGE_DEFAULT;
+	bd.ByteWidth = sizeof(Vertex) * meshData.GetNumOfVertices();
+	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bd.CPUAccessFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA vertexBufferData;
+	ZeroMemory(&vertexBufferData, sizeof(vertexBufferData));
+	vertexBufferData.pSysMem = &vertices[0];
+
+	HRESULT hr = device->CreateBuffer(&bd, &vertexBufferData, &pVertexBuffer);
+	assert(SUCCEEDED(hr));
 }

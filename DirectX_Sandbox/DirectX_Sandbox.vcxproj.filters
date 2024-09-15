@@ -186,6 +186,12 @@
     <ClInclude Include="Managers\RenderManager.h">
       <Filter>Header Files\Singletons</Filter>
     </ClInclude>
+    <ClInclude Include="Managers\EdgeDrawer.h">
+      <Filter>Header Files\Singletons</Filter>
+    </ClInclude>
+    <ClInclude Include="Materials\EdgeMaterial.h">
+      <Filter>Header Files\Materials</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -287,6 +293,12 @@
     <ClCompile Include="Managers\RenderManager.cpp">
       <Filter>Source Files\Singletons</Filter>
     </ClCompile>
+    <ClCompile Include="Managers\EdgeDrawer.cpp">
+      <Filter>Source Files\Singletons</Filter>
+    </ClCompile>
+    <ClCompile Include="Materials\EdgeMaterial.cpp">
+      <Filter>Source Files\Materials</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectX_Sandbox.rc">
@@ -307,5 +319,6 @@
     <FxCompile Include="skybox.fx" />
     <FxCompile Include="light.fx" />
     <FxCompile Include="base.fx" />
+    <FxCompile Include="edge_draw.fx" />
   </ItemGroup>
 </Project>

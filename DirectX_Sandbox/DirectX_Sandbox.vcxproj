@@ -177,6 +177,7 @@
     <ClInclude Include="Event.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Managers\ECSWorld.h" />
+    <ClInclude Include="Managers\EdgeDrawer.h" />
     <ClInclude Include="Managers\GameWorld.h" />
     <ClInclude Include="Managers\Graphics.h" />
     <ClInclude Include="Managers\InputManager.h" />
@@ -186,6 +187,7 @@
     <ClInclude Include="Managers\ResourcesContainer.h" />
     <ClInclude Include="Managers\SceneSaveLoad.h" />
     <ClInclude Include="Managers\Singleton.h" />
+    <ClInclude Include="Materials\EdgeMaterial.h" />
     <ClInclude Include="Materials\Material.h" />
     <ClInclude Include="Materials\SkyboxMaterial.h" />
     <ClInclude Include="Materials\SolidMaterial.h" />
@@ -215,6 +217,7 @@
     <ClCompile Include="Editor\AssetBrowserEditor.cpp" />
     <ClCompile Include="Editor\Editor.cpp" />
     <ClCompile Include="Managers\ECSWorld.cpp" />
+    <ClCompile Include="Managers\EdgeDrawer.cpp" />
     <ClCompile Include="Managers\GameWorld.cpp" />
     <ClCompile Include="Managers\Graphics.cpp" />
     <ClCompile Include="Managers\InputManager.cpp" />
@@ -223,6 +226,7 @@
     <ClCompile Include="Managers\RenderManager.cpp" />
     <ClCompile Include="Managers\ResourcesContainer.cpp" />
     <ClCompile Include="Managers\SceneSaveLoad.cpp" />
+    <ClCompile Include="Materials\EdgeMaterial.cpp" />
     <ClCompile Include="Materials\Material.cpp" />
     <ClCompile Include="Materials\SkyboxMaterial.cpp" />
     <ClCompile Include="Materials\SolidMaterial.cpp" />
@@ -242,6 +246,7 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="base.fx" />
+    <FxCompile Include="edge_draw.fx" />
     <FxCompile Include="light.fx" />
     <FxCompile Include="skybox.fx" />
     <FxCompile Include="surface.fx" />

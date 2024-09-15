@@ -18,6 +18,7 @@ public:
 	void Select(Entity* entity)
 	{
 		this->entity = entity;
+		entity->AddComponent<DrawEdgeFlag>();
 		auto entityTransform = entity->GetComponent<TransformComponent>();
 		initPos = entityTransform->GetPosition();
 		initRotation = entityTransform->GetRotation();
@@ -26,6 +27,7 @@ public:
 
 	void Deselect()
 	{
+		entity->RemoveComponent<DrawEdgeFlag>();
 		this->entity = nullptr;
 	}
 
